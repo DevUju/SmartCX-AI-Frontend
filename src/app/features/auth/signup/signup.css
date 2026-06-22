@@ -1,0 +1,67 @@
+.signup-container {
+  max-width: 360px;
+  margin: 0 auto;
+  padding: 24px;
+  text-align: center;
+}
+
+.app-title {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.tagline {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-field {
+  width: 100%;
+}
+
+.signup-btn {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.login-link {
+  margin-top: 16px;
+  font-size: 13px;
+}
+
+.google-btn {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.legal-text {
+  margin-top: 20px;
+  font-size: 11px;
+  color: #999;
+}
+
+.link-btn {
+  color: #1976d2;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+}
+
+.login-link,
+.signup-link {
+  margin-top: 16px;
+  font-size: 13px;
+  text-align: center;
+}
+

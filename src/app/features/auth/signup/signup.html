@@ -1,0 +1,58 @@
+<div class="container">
+  <div class="signup-container">
+  <h2 class="app-title">SmartCX AI</h2>
+  <p class="tagline">Stay focused, stay productive.</p>
+
+  <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="signup-form">
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Full Name</mat-label>
+      <input matInput formControlName="fullName">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Email Address</mat-label>
+      <input matInput formControlName="email">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Password</mat-label>
+      <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
+      <button mat-icon-button matSuffix (click)="hide = !hide" type="button">
+        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Confirm Password</mat-label>
+      <input matInput type="password" formControlName="confirmPassword">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Persona</mat-label>
+      <mat-select formControlName="persona">
+        <mat-option value="manager">Manager</mat-option>
+        <mat-option value="freelancer">Freelancer</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" class="signup-btn" type="submit" [disabled]="!signupForm.valid">
+      Sign Up
+    </button>
+  </form>
+
+  <p class="login-link">
+    Already have an account?
+    <a routerLink="/login" class="link-btn">Log In</a>
+  </p>
+
+
+  <button mat-stroked-button class="google-btn">
+    <mat-icon>account_circle</mat-icon> Sign up with Google
+  </button>
+
+  <p class="legal-text">
+    By signing up, you agree to our <a href="#">Terms</a> & <a href="#">Privacy Policy</a>.
+  </p>
+ </div>
+
+</div>

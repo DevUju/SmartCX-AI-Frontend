@@ -1,13 +1,39 @@
-:root {
-  --primary-color: #F97316;
-  --secondary-color: #2563EB;
-  --card-radius: 16px;
+/* Default: Mobile-first */
+.container {
+  max-width: 360px;
+  margin: 0 auto;
+  padding: 24px;
+  text-align: center;
 }
 
-.card {
-  background: #fff;
-  border-radius: var(--card-radius);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  padding: 16px;
-  margin-bottom: 16px;
+/* 📱 Tablet (iPad portrait/landscape) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .container {
+    max-width: 600px;
+    padding: 40px;
+  }
+
+  h2 {
+    font-size: 28px;
+  }
+
+  p, label, input, button {
+    font-size: 15px;
+  }
+}
+
+/* 💻 Laptop/Desktop */
+@media (min-width: 1025px) {
+  .container {
+    max-width: 800px;
+    padding: 60px;
+  }
+
+  h2 {
+    font-size: 32px;
+  }
+
+  p, label, input, button {
+    font-size: 16px;
+  }
 }

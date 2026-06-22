@@ -1,0 +1,36 @@
+<div class="container">
+  <div class="login-container">
+  <h2 class="app-title">Welcome Back</h2>
+  <p class="tagline">Log in to continue</p>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Email Address</mat-label>
+      <input matInput formControlName="email">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Password</mat-label>
+      <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
+      <button mat-icon-button matSuffix (click)="hide = !hide" type="button">
+        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" class="login-btn" type="submit" [disabled]="!loginForm.valid">
+      Log In
+    </button>
+  </form>
+
+  <p class="signup-link">
+    Don’t have an account?
+    <a routerLink="/signup" class="link-btn">Sign Up</a>
+  </p>
+
+
+  <button mat-stroked-button class="google-btn">
+    <mat-icon>account_circle</mat-icon> Log in with Google
+  </button>
+ </div>
+
+</div>

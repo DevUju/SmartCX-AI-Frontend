@@ -1,25 +1,20 @@
-import { Component, signal } from '@angular/core';
-import { MatSliderModule } from '@angular/material/slider';
-import { MatCardModule } from '@angular/material/card';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../core/services/auth/auth.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
+  imports: [CommonModule],
   standalone: true,
-  imports: [MatSliderModule, MatCardModule, CommonModule],
   templateUrl: './profile.html',
-  styleUrls: ['./profile.css'],
+  styleUrls: ['./profile.css']
 })
-export class ProfileComponent {
-  mood = signal(5);
+export class ProfileComponent implements OnInit {
+  user: any;
 
-  goals = signal<{ title: string; status: string }[]>([
-  { title: 'Exercise daily', status: 'In progress' },
-  { title: 'Read 30 mins', status: 'Completed' },
-  { title: 'Practice coding', status: 'Not started' }
-]);
+  constructor(private authService: AuthService) {}
 
-  updateMood(value: number) {
-    this.mood.set(value);
+  ngOnInit() {
+    this.user = this.authService.getUser();
   }
 }

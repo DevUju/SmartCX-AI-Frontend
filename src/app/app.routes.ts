@@ -1,14 +1,20 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  {
-    path: 'dashboard',
+    {
+    path: 'signup',
     loadComponent: () =>
-      import('./features/dashboard/user-persona/user-persona')
-        .then(m => m.UserPersonaComponent)
+      import('./features/auth/signup/signup')
+        .then(m => m.SignupComponent)
   },
   {
-    path: 'me',
+    path: 'login',
+    loadComponent: () =>
+      import('./features/auth/login/login')
+        .then(m => m.LoginComponent)
+  },
+  {
+    path: 'profile',
     loadComponent: () =>
       import('./features/profile/profile/profile')
         .then(m => m.ProfileComponent)
@@ -39,7 +45,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'daily',
+    redirectTo: 'signup',
     pathMatch: 'full'
   }
 ];

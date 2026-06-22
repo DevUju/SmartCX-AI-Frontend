@@ -1,38 +1,13 @@
-<div class="card">
-  <img src="assets/avatar.png" alt="Avatar" class="avatar">
-  <h2>Maya, Creative Freelancer</h2>
+<div class="container">
+  <h2 class="app-title">Profile</h2>
 
-  <mat-card class="section">
-    <h3>About</h3>
-    <p>Creative freelancer working on branding and indie app design.</p>
-  </mat-card>
+  <div *ngIf="user; else noUser" class="profile-card">
+    <p><strong>Name:</strong> {{ user.fullName }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Persona:</strong> {{ user.persona }}</p>
+  </div>
 
-  <mat-card class="section">
-    <h3>Goals</h3>
-    <div *ngFor="let goal of goals()">
-      <p>{{ goal.title }} — <span class="status">{{ goal.status }}</span></p>
-    </div>
-  </mat-card>
-
-  <mat-card class="section orange">
-    <h3>Frustrations</h3>
-    <p>Managing multiple client deadlines and balancing creative freedom.</p>
-  </mat-card>
-
-  <mat-card class="section">
-    <h3>Current Focus</h3>
-    <p>Client feedback and weekly showcase preparation.</p>
-  </mat-card>
-
-  <mat-card class="section">
-    <h3>Mood Tracking</h3>
-    <mat-slider min="0" max="100">
-      <input
-        matSliderThumb
-        [value]="mood()"
-        (valueChange)="updateMood($event)"
-      />
-    </mat-slider>
-    <p>Current Mood: {{ mood() }}/10</p>
-  </mat-card>
+  <ng-template #noUser>
+    <p class="no-user">No user data available. Please sign up first.</p>
+  </ng-template>
 </div>

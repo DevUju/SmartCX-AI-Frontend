@@ -3,19 +3,27 @@
   bottom: 0;
   width: 100%;
   display: flex;
-  justify-content: space-around;
+  justify-content: center; /* centers the group */
   background: #fff;
   box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
   padding: 8px 0;
 }
 
+.bottom-nav-inner {
+  display: flex;
+  gap: 32px; /* equal spacing between buttons */
+}
+
 button {
-  flex: 1;
-  color: #666;
+  flex: none; /* stop buttons from stretching unevenly */
+  color: rgb(11, 15, 11);
   display: flex;
   flex-direction: column;
   align-items: center;
   font-size: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 button.active {

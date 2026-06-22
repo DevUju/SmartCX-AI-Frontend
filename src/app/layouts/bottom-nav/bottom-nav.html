@@ -1,26 +1,24 @@
 <nav class="bottom-nav">
-  <button mat-button routerLink="/persona" routerLinkActive="active">
-    <mat-icon>account_circle</mat-icon>
-    Persona
-  </button>
-  <button mat-button routerLink="/daily" routerLinkActive="active">
-    <mat-icon>checklist</mat-icon>
-    Daily
-  </button>
-  <button mat-button routerLink="/analytics" routerLinkActive="active">
-    <mat-icon>insights</mat-icon>
-    Productivity
-  </button>
-  <button mat-button routerLink="/projects" routerLinkActive="active">
-    <mat-icon>work</mat-icon>
-    Projects
-  </button>
-  <button mat-button routerLink="/upcoming" routerLinkActive="active">
-    <mat-icon>event</mat-icon>
-    Upcoming
-  </button>
-  <button mat-button routerLink="/profile" routerLinkActive="active">
-    <mat-icon>person</mat-icon>
-    Profile
-  </button>
+  <div class="bottom-nav-inner">
+    <button routerLink="/daily" routerLinkActive="active">
+      <mat-icon>today</mat-icon>
+      Daily
+    </button>
+    <button routerLink="/projects" routerLinkActive="active">
+      <mat-icon>work</mat-icon>
+      Projects
+    </button>
+    <button routerLink="/analytics" routerLinkActive="active">
+      <mat-icon>bar_chart</mat-icon>
+      Productivity
+    </button>
+    <button routerLink="/upcoming" routerLinkActive="active">
+      <mat-icon>event</mat-icon>
+      Upcoming
+    </button>
+    <button routerLink="/profile" routerLinkActive="active">
+      <mat-icon>account_circle</mat-icon>
+      Profile
+    </button>
+  </div>
 </nav>
