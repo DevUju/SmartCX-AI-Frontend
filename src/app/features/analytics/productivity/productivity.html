@@ -1,0 +1,79 @@
+<div class="stats-container">
+  <!-- Header -->
+  <div class="header-row">
+    <h2 class="header">Focus</h2>
+    <button mat-icon-button class="settings-btn">
+      <mat-icon>settings</mat-icon>
+    </button>
+  </div>
+
+  <!-- Progress -->
+  <mat-progress-bar mode="determinate" [value]="progress()"></mat-progress-bar>
+  <p class="progress-label">{{ progress() }}% Complete</p>
+
+  <!-- Insights -->
+  <div class="section insights">
+    <h3>Insights</h3>
+    <p class="insight-text">{{ stats().insight }}</p>
+    <div class="stat-boxes">
+      <div class="stat-box">
+        <p>Completed</p>
+        <strong>{{ stats().completed }}</strong>
+      </div>
+      <div class="stat-box">
+        <p>Current Streak</p>
+        <strong>{{ stats().streak }} days</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weekly Completion -->
+  <div class="section weekly">
+    <h3>Weekly Completion <span class="weekly-change">{{ stats().weeklyCompletion }}</span></h3>
+    <div class="weekly-chart">
+      <div *ngFor="let day of weekly()" class="bar">
+        <div class="bar-fill" [style.height.%]="day.value"></div>
+        <span class="day">{{ day.day }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Achievement -->
+  <div class="section achievement">
+    <h3>New Achievement</h3>
+    <div class="achievement-box">
+      <p class="ach-title">{{ achievement().title }}</p>
+      <p class="ach-desc">{{ achievement().description }}</p>
+    </div>
+  </div>
+
+  <!-- Category Distribution -->
+  <div class="section categories">
+    <h3>Category Distribution</h3>
+    <div *ngFor="let cat of categories()" class="category-row">
+      <span class="label">{{ cat.name }}</span>
+      <mat-progress-bar mode="determinate" [value]="cat.percent"></mat-progress-bar>
+      <span class="percent">{{ cat.percent }}%</span>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <button mat-button routerLink="/daily" routerLinkActive="active">
+    <mat-icon>task_alt</mat-icon>
+    Daily
+  </button>
+  <button mat-button routerLink="/upcoming" routerLinkActive="active">
+    <mat-icon>event</mat-icon>
+    Upcoming
+  </button>
+  <button mat-button routerLink="/projects" routerLinkActive="active">
+    <mat-icon>work</mat-icon>
+    Projects
+  </button>
+  <button mat-button routerLink="/productivity" routerLinkActive="active">
+    <mat-icon>analytics</mat-icon>
+    Stats
+  </button>
+</nav>

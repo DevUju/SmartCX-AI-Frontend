@@ -1,0 +1,71 @@
+<div class="daily-container">
+  <!-- Header -->
+  <div class="header-row">
+    <h2 class="header">Focus</h2>
+    <button mat-icon-button class="settings-btn">
+      <mat-icon>settings</mat-icon>
+    </button>
+  </div>
+
+  <!-- Progress -->
+  <mat-progress-bar mode="determinate" [value]="progress()"></mat-progress-bar>
+  <p class="progress-label">{{ progress() }}% Complete</p>
+
+  <!-- Quick Task -->
+  <mat-form-field appearance="outline" class="quick-task">
+    <mat-label>Add a quick task…</mat-label>
+    <input matInput />
+    <button mat-icon-button matSuffix>
+      <mat-icon>add</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <!-- Overdue -->
+  <h3 class="section">OVERDUE</h3>
+  <div *ngFor="let task of overdue()" class="task-item">
+    <span class="title">{{ task.title }}</span>
+    <span class="tag">{{ task.tag }}</span>
+    <span class="date">{{ task.date }}</span>
+  </div>
+
+  <!-- Today -->
+  <h3 class="section">TODAY</h3>
+  <div *ngFor="let task of today()" class="task-item">
+    <mat-checkbox>{{ task.title }}</mat-checkbox>
+    <span class="tag">{{ task.tag }}</span>
+    <span class="time">{{ task.time }}</span>
+  </div>
+
+  <h3 class="section">COMPLETED</h3>
+  <div *ngFor="let task of completed()" class="task-item completed">
+    <mat-checkbox checked disabled></mat-checkbox>
+    <span class="title done">{{ task.title }}</span>
+    <span class="tag">{{ task.tag }}</span>
+  </div>
+</div>
+
+
+<!-- Floating Plus -->
+<button mat-fab color="primary" class="fab-btn">
+  <mat-icon>add</mat-icon>
+</button>
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <button mat-button routerLink="/daily" routerLinkActive="active">
+    <mat-icon>checklist</mat-icon>
+    Daily
+  </button>
+  <button mat-button routerLink="/upcoming" routerLinkActive="active">
+    <mat-icon>event</mat-icon>
+    Upcoming
+  </button>
+  <button mat-button routerLink="/projects" routerLinkActive="active">
+    <mat-icon>work</mat-icon>
+    Projects
+  </button>
+  <button mat-button routerLink="/productivity" routerLinkActive="active">
+    <mat-icon>insights</mat-icon>
+    Stats
+  </button>
+</nav>

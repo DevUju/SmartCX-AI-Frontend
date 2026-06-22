@@ -1,0 +1,85 @@
+<div class="projects-container">
+  <!-- Header -->
+  <div class="header-row">
+    <h2 class="header">Focus</h2>
+    <button mat-icon-button class="settings-btn">
+      <mat-icon>settings</mat-icon>
+    </button>
+  </div>
+
+  <!-- Overview -->
+  <div class="section overview">
+    <h3>Projects</h3>
+    <p class="overview-text">
+      Manage your focused workspaces and track progress across your primary life domains.
+    </p>
+  </div>
+
+  <!-- Project Cards -->
+  <div class="project-card">
+    <h4>Product Launch</h4>
+    <p class="subtext">Work • Q4 Initiatives</p>
+    <p class="progress-text">14/20 tasks</p>
+    <mat-progress-bar mode="determinate" value="70"></mat-progress-bar>
+  </div>
+
+  <div class="project-card">
+    <h4>Marathon Prep</h4>
+    <p class="subtext">Personal • Wellness</p>
+    <p class="progress-text">8/24 tasks</p>
+    <mat-progress-bar mode="determinate" value="33"></mat-progress-bar>
+  </div>
+
+  <div class="project-card">
+    <h4>Indie App Design</h4>
+    <p class="subtext">Side Project • Creative</p>
+    <p class="progress-text">5/5 tasks</p>
+    <mat-progress-bar mode="determinate" value="100"></mat-progress-bar>
+  </div>
+
+  <!-- Add New Project -->
+  <div class="add-project">
+    <button mat-stroked-button color="primary">Add New Project</button>
+    <p class="add-text">Define a new focus domain</p>
+  </div>
+
+  <!-- Global Progress -->
+  <div class="section global-progress">
+    <h3>Global Progress</h3>
+    <div class="progress-box">
+      <p class="progress-title">Focused Week</p>
+      <p class="progress-value">84%</p>
+      <p class="progress-note">+12% from last week</p>
+    </div>
+  </div>
+
+  <!-- Archived & Folders -->
+  <div class="section archived">
+    <h3>Archived & Folders</h3>
+    <div class="tags">
+      <span class="tag">2023 Archives</span>
+      <span class="tag">Shopping Lists</span>
+      <span class="tag">Idea Dump</span>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <button mat-button routerLink="/daily" routerLinkActive="active">
+    <mat-icon>task_alt</mat-icon>
+    Daily
+  </button>
+  <button mat-button routerLink="/upcoming" routerLinkActive="active">
+    <mat-icon>event</mat-icon>
+    Upcoming
+  </button>
+  <button mat-button routerLink="/projects" routerLinkActive="active">
+    <mat-icon>work</mat-icon>
+    Projects
+  </button>
+  <button mat-button routerLink="/productivity" routerLinkActive="active">
+    <mat-icon>analytics</mat-icon>
+    Stats
+  </button>
+</nav>

@@ -1,0 +1,29 @@
+@use '@angular/material' as mat;
+
+/* Define Material 3 theme at global level */
+html {
+  height: 100%;
+
+  @include mat.theme((
+    color: (
+      primary: mat.$cyan-palette,
+      tertiary: mat.$orange-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+body {
+  /* Use system or forced light theme */
+  color-scheme: light;
+
+  /* Material system tokens */
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  /* Reset default spacing */
+  margin: 0;
+  min-height: 100%;
+}
