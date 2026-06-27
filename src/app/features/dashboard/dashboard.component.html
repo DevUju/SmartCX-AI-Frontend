@@ -1,0 +1,90 @@
+<section class="dashboard">
+  @if (errorMessage()) {
+    <article class="panel">
+      <p>{{ errorMessage() }}</p>
+      <button type="button" class="btn-primary" (click)="retry()">Retry</button>
+    </article>
+  }
+
+  <div class="metrics-grid">
+    @for (metric of metrics(); track metric.label) {
+      <article class="metric-card">
+        <p>{{ metric.label }}</p>
+        <h3>{{ metric.value }}</h3>
+        @if (metric.extra) {
+          <span>{{ metric.extra }}</span>
+        }
+      </article>
+    }
+  </div>
+
+  <div class="panel trend-panel">
+    <header>
+      <h2>Live Performance Trends</h2>
+    </header>
+    <div class="bars" role="img" aria-label="Performance trend bars">
+      @for (point of trends(); track point.time) {
+        <div class="bar-wrap">
+          <div class="bar" [style.height.%]="point.value"></div>
+          <span>{{ point.time }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="panel tickets-panel">
+    <header>
+      <h2>Active Tickets</h2>
+    </header>
+    <table>
+      <thead>
+        <tr>
+          <th>Ticket ID</th>
+          <th>Issue Description</th>
+          <th>Priority</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (ticket of tickets(); track ticket.id) {
+          <tr>
+            <td>{{ ticket.id }}</td>
+            <td>{{ ticket.description }}</td>
+            <td>
+              <span class="priority" [class.high]="ticket.priority === 'HIGH'" [class.medium]="ticket.priority === 'MEDIUM'">
+                {{ ticket.priority }}
+              </span>
+            </td>
+            <td><button type="button">Manage</button></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="side-panels">
+    <article class="panel team-panel">
+      <h2>Team Availability</h2>
+      <ul>
+        @for (member of team; track member.name) {
+          <li>
+            <span class="member-name">
+              <span class="member-icon" aria-hidden="true"></span>
+              {{ member.name }}
+            </span>
+            <strong>{{ member.status }}</strong>
+          </li>
+        }
+      </ul>
+    </article>
+
+    <article class="ai-panel">
+      <h2>AI Insight</h2>
+      <p>
+        Escalation risk is climbing in delivery-related tickets. Reassign two medium
+        priority tickets to available agents and trigger logistics sync check.
+      </p>
+      <button type="button">Apply Recommendation</button>
+    </article>
+  </div>
+</section>

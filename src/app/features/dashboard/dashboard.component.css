@@ -1,0 +1,206 @@
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.9fr;
+  gap: 0.9rem;
+}
+
+.metrics-grid {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+}
+
+.metric-card,
+.panel,
+.ai-panel {
+  border: 1px solid #d9d5cc;
+  border-radius: 1rem;
+  background: #fff;
+  padding: 0.85rem;
+}
+
+.metric-card p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+}
+
+.metric-card h3 {
+  margin: 0.35rem 0 0;
+  font-size: 1.7rem;
+}
+
+.metric-card span {
+  display: inline-block;
+  margin-top: 0.3rem;
+  color: #27724a;
+}
+
+.trend-panel {
+  grid-column: 1 / -1;
+}
+
+.tickets-panel {
+  grid-column: 1 / -1;
+}
+
+.panel header h2,
+.panel h2,
+.ai-panel h2 {
+  margin: 0;
+  font-size: 1.08rem;
+}
+
+.bars {
+  margin-top: 0.7rem;
+  height: 11rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.bar-wrap {
+  flex: 1;
+  text-align: center;
+}
+
+.bar {
+  margin: 0 auto;
+  width: 70%;
+  border-radius: 0.5rem 0.5rem 0.2rem 0.2rem;
+  background: linear-gradient(180deg, #212121, #7b7b7b);
+  min-height: 20%;
+}
+
+.bar-wrap span {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.tickets-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.6rem;
+}
+
+.tickets-panel th,
+.tickets-panel td {
+  text-align: left;
+  padding: 0.58rem;
+  border-bottom: 1px solid #ece7dd;
+  font-size: 0.86rem;
+}
+
+.tickets-panel button {
+  border: 1px solid #d6d0c4;
+  border-radius: 0.55rem;
+  background: #fff;
+  padding: 0.35rem 0.55rem;
+}
+
+.priority {
+  border-radius: 999px;
+  font-size: 0.74rem;
+  padding: 0.2rem 0.53rem;
+  border: 1px solid #c8c3b9;
+}
+
+.priority.high {
+  color: #a52f2f;
+  border-color: #e2bbbb;
+  background: #fff1f1;
+}
+
+.priority.medium {
+  color: #8c6a0b;
+  border-color: #ecdcae;
+  background: #fff9e8;
+}
+
+.side-panels {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: start;
+  gap: 0.35rem;
+}
+
+ul {
+  list-style: none;
+  margin: 0.7rem 0 0;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #ebe5d9;
+  padding: 0.45rem 0;
+  font-size: 0.88rem;
+}
+
+li strong {
+  font-size: 0.76rem;
+  border: 1px solid #ded8cb;
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem;
+}
+
+.member-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.member-icon {
+  width: 0.58rem;
+  height: 0.58rem;
+  border-radius: 999px;
+  border: 1px solid #8d8577;
+  background: #f2eee6;
+  flex: 0 0 auto;
+}
+
+.ai-panel {
+  background: #171717;
+  color: #f7f7f7;
+}
+
+.ai-panel p {
+  color: #cecece;
+  font-size: 0.9rem;
+}
+
+.ai-panel button {
+  border: 0;
+  border-radius: 0.7rem;
+  padding: 0.7rem 0.8rem;
+  background: #f7f7f7;
+  color: #151515;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 1100px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+  .trend-panel {
+    grid-column: auto;
+  }
+  .tickets-panel {
+    grid-column: auto;
+  }
+  .side-panels {
+    grid-column: auto;
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+  }
+}

@@ -1,51 +1,39 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+import { LoginComponent } from './features/auth/login/login.component';
+import { RegisterComponent } from './features/auth/register/register.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { ConversationViewComponent } from './features/issue-queue/conversation-view/conversation-view.component';
+import { IssueQueueComponent } from './features/issue-queue/issue-queue/issue-queue.component';
+import { ShellComponent } from './features/shell/shell.component';
+import { CreateTicketComponent } from './features/tickets/create-ticket/create-ticket.component';
+import { ResolutionSummaryComponent } from './features/tickets/resolution-summary/resolution-summary.component';
+import { TicketListComponent } from './features/tickets/ticket-list/ticket-list.component';
+import { TicketWorkspaceComponent } from './features/tickets/ticket-workspace/ticket-workspace.component';
+import { PagePlaceholderComponent } from './shared/components/page-placeholder/page-placeholder.component';
 
 export const routes: Routes = [
-    {
-    path: 'signup',
-    loadComponent: () =>
-      import('./features/auth/signup/signup')
-        .then(m => m.SignupComponent)
-  },
-  {
-    path: 'login',
-    loadComponent: () =>
-      import('./features/auth/login/login')
-        .then(m => m.LoginComponent)
-  },
-  {
-    path: 'profile',
-    loadComponent: () =>
-      import('./features/profile/profile/profile')
-        .then(m => m.ProfileComponent)
-  },
-  {
-    path: 'daily',
-    loadComponent: () =>
-      import('./features/tasks/daily-tasks/daily-tasks')
-        .then(m => m.DailyTasksComponent)
-  },
-  {
-    path: 'analytics',
-    loadComponent: () =>
-      import('./features/analytics/productivity/productivity')
-        .then(m => m.ProductivityComponent)
-  },
-  {
-    path: 'projects',
-    loadComponent: () =>
-      import('./features/projects/projects/projects')
-        .then(m => m.ProjectsComponent)
-  },
-  {
-    path: 'upcoming',
-    loadComponent: () =>
-      import('./features/schedule/upcoming-schedule/upcoming-schedule')
-        .then(m => m.UpcomingScheduleComponent)
-  },
-  {
-    path: '',
-    redirectTo: 'signup',
-    pathMatch: 'full'
-  }
+	{ path: 'login', component: LoginComponent },
+	{ path: 'register', component: RegisterComponent },
+	{
+		path: '',
+		component: ShellComponent,
+		canActivateChild: [authGuard],
+		children: [
+			{ path: 'dashboard', component: DashboardComponent },
+			{ path: 'issues', component: IssueQueueComponent },
+			{ path: 'issues/:id', component: ConversationViewComponent },
+			{ path: 'tickets', component: TicketListComponent },
+			{ path: 'tickets/create', component: CreateTicketComponent },
+			{ path: 'tickets/:id', component: TicketWorkspaceComponent },
+			{ path: 'tickets/:id/resolution', component: ResolutionSummaryComponent },
+			{
+				path: 'settings',
+				component: PagePlaceholderComponent,
+				data: { title: 'Settings', subtitle: 'Settings page will be added after core ticket flows.' },
+			},
+			{ path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+		],
+	},
+	{ path: '**', redirectTo: 'dashboard' },
 ];

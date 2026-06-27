@@ -60,8 +60,8 @@
 }
 
 .day.active {
-  color: #1976d2;
-  border-bottom: 2px solid #1976d2;
+  color: #3b62ad;
+  border-bottom: 2px solid #3b62ad;
 }
 
 /* Day sections */
@@ -95,7 +95,7 @@
 
 .category {
   font-size: 12px;
-  color: #1976d2;
+  color: #3b62ad;
   font-weight: 700;
   margin: 4px 0;
 }

@@ -1,13 +1,133 @@
-<div class="container">
-  <h2 class="app-title">Profile</h2>
-
-  <div *ngIf="user; else noUser" class="profile-card">
-    <p><strong>Name:</strong> {{ user.fullName }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
-    <p><strong>Persona:</strong> {{ user.persona }}</p>
+<div class="profile-container">
+  <!-- Header -->
+  <div class="profile-header">
+    <h1 class="page-title">Your Profile</h1>
+    <p class="subtitle">Manage your account settings and preferences</p>
   </div>
 
+  <!-- Profile Content -->
+  <div *ngIf="user; else noUser" class="profile-content">
+    <!-- Avatar Section -->
+    <div class="avatar-section">
+      <div class="avatar">
+        <span class="avatar-initial">{{ user.fullName?.charAt(0) | uppercase }}</span>
+      </div>
+    </div>
+
+    <!-- Profile Card -->
+    <mat-card class="profile-card">
+      <mat-card-header>
+        <mat-card-title>Account Information</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="info-grid">
+          <!-- Full Name -->
+          <div class="info-item">
+            <mat-icon class="info-icon">person</mat-icon>
+            <div class="info-content">
+              <label>Full Name</label>
+              <p>{{ user.fullName }}</p>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="info-item">
+            <mat-icon class="info-icon">email</mat-icon>
+            <div class="info-content">
+              <label>Email Address</label>
+              <p>{{ user.email }}</p>
+            </div>
+          </div>
+
+          <!-- Persona -->
+          <div class="info-item">
+            <mat-icon class="info-icon">badge</mat-icon>
+            <div class="info-content">
+              <label>Role</label>
+              <p class="persona-badge" [class]="user.persona?.toLowerCase()">
+                {{ user.persona }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Member Since -->
+          <div class="info-item">
+            <mat-icon class="info-icon">calendar_today</mat-icon>
+            <div class="info-content">
+              <label>Member Since</label>
+              <p>{{ 'June 23, 2026' }}</p>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Actions Section -->
+    <div class="actions-section">
+      <button mat-raised-button color="primary" class="action-btn">
+        <mat-icon>edit</mat-icon>
+        Edit Profile
+      </button>
+      <button mat-raised-button color="accent" class="action-btn">
+        <mat-icon>lock</mat-icon>
+        Change Password
+      </button>
+      <button mat-stroked-button class="action-btn logout-btn" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
+    </div>
+
+    <!-- Settings Card -->
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-card-title>Preferences</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="settings-list">
+          <div class="setting-item">
+            <div class="setting-label">
+              <span>Email Notifications</span>
+              <p class="setting-desc">Receive updates about your tasks and projects</p>
+            </div>
+            <mat-slide-toggle></mat-slide-toggle>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-label">
+              <span>Dark Mode</span>
+              <p class="setting-desc">Switch to dark theme</p>
+            </div>
+            <mat-slide-toggle></mat-slide-toggle>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-label">
+              <span>Public Profile</span>
+              <p class="setting-desc">Make your profile visible to others</p>
+            </div>
+            <mat-slide-toggle></mat-slide-toggle>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- No User Template -->
   <ng-template #noUser>
-    <p class="no-user">No user data available. Please sign up first.</p>
+    <div class="no-user-container">
+      <mat-card class="no-user-card">
+        <mat-card-content>
+          <mat-icon class="no-user-icon">person_off</mat-icon>
+          <h2>Not Logged In</h2>
+          <p>Please log in to view your profile</p>
+          <button mat-raised-button color="primary" routerLink="/login">
+            Go to Login
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </ng-template>
 </div>

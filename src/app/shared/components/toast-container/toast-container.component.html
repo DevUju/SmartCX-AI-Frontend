@@ -1,0 +1,8 @@
+<section class="toast-host" aria-live="polite" aria-atomic="true">
+  @for (item of toastService.messages(); track item.id) {
+    <article class="toast" [class.success]="item.level === 'success'" [class.error]="item.level === 'error'">
+      <p>{{ item.text }}</p>
+      <button type="button" (click)="toastService.dismiss(item.id)">Dismiss</button>
+    </article>
+  }
+</section>

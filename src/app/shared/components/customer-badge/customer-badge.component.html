@@ -1,0 +1,10 @@
+<div class="customer-badge">
+  <span class="avatar" [style.background]="avatarColor()">{{ initials() }}</span>
+  <span class="badge-name">{{ name() }}</span>
+  @if (!hideChannel() && channelLabel()) {
+    <span class="chip channel" [class]="'chip channel ch-' + (channel() ?? '')">{{ channelLabel() }}</span>
+  }
+  @if (!hideStatus() && statusLabel()) {
+    <span class="chip status" [class]="'chip status st-' + (status() ?? '')">{{ statusLabel() }}</span>
+  }
+</div>

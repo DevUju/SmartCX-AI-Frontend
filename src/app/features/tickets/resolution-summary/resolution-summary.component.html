@@ -1,0 +1,56 @@
+<section class="resolution-page">
+  <header class="head">
+    <div>
+      <p class="crumb">Tickets > {{ ticket()?.ticketNumber || '---' }} > Resolution Final</p>
+      <h1>RESOLUTION FINAL STAGE</h1>
+      <p class="sub">Review closure details, validate sentiment shift, and finalize case state.</p>
+    </div>
+    <button type="button" class="btn-lite">EXPORT PDF</button>
+  </header>
+
+  <article class="summary-card">
+    <span class="chip">CASE_FINAL_VERIFIED</span>
+
+    @if (errorMessage()) {
+      <p>{{ errorMessage() }}</p>
+    }
+
+    <div class="grid">
+      <section class="timeline">
+        <h2>Ticket Timeline</h2>
+        <ul>
+          @for (item of timeline; track item) {
+            <li>{{ item }}</li>
+          }
+        </ul>
+      </section>
+
+      <section class="resolution">
+        <h2>Resolution Summary</h2>
+        <h3>The Problem</h3>
+        <p>
+          Customer experienced delivery delay beyond expected SLA and lacked reliable
+          status visibility.
+        </p>
+
+        <h3>The Action</h3>
+        <form [formGroup]="form" novalidate>
+          <textarea rows="5" formControlName="resolutionSummary"></textarea>
+        </form>
+
+        <div class="map-placeholder">Dispatch Location Map</div>
+        <div class="sentiment">
+          {{ form.controls.sentimentShiftStart.value | titlecase }} →
+          {{ form.controls.sentimentShiftEnd.value | titlecase }}
+        </div>
+      </section>
+    </div>
+  </article>
+
+  <footer class="actions">
+    <button type="button" class="btn-primary" [disabled]="saving()" (click)="markResolved()">
+      {{ saving() ? 'PROCESSING...' : 'MARK RESOLVED' }}
+    </button>
+    <button type="button" class="btn-lite" (click)="reopen()">REOPEN TICKET</button>
+  </footer>
+</section>

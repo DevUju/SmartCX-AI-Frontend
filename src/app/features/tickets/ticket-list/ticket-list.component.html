@@ -1,0 +1,101 @@
+<section class="ticket-list-page">
+  <header class="page-head">
+    <div>
+      <h1>SUPPORT TICKETS</h1>
+      <p>Track issue progress, assignments, and SLA response performance.</p>
+    </div>
+    <div class="head-actions">
+      <button type="button" (click)="applyFilters()">Apply</button>
+      <button type="button" (click)="goToPage(1)">Reset Page</button>
+    </div>
+  </header>
+
+  <article class="table-card" style="padding: 1rem; display: grid; gap: 0.75rem;">
+    <div style="display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
+      <input
+        type="text"
+        placeholder="Search tickets"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="onSearchInput($event)"
+      />
+
+      <select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event); applyFilters()">
+        @for (status of statusOptions; track status) {
+          <option [value]="status">{{ status | titlecase }}</option>
+        }
+      </select>
+
+      <select [ngModel]="selectedPriority()" (ngModelChange)="selectedPriority.set($event); applyFilters()">
+        @for (priority of priorityOptions; track priority) {
+          <option [value]="priority">{{ priority | titlecase }}</option>
+        }
+      </select>
+    </div>
+    <button type="button" class="btn-primary" style="width: fit-content;" (click)="applyFilters()">Search</button>
+  </article>
+
+  <div class="tabs">
+    @for (tab of tabs(); track tab.label) {
+      <button type="button" (click)="selectTab(tab.key)">{{ tab.label }} ({{ tab.count }})</button>
+    }
+  </div>
+
+  @if (errorMessage()) {
+    <article class="table-card" style="padding: 1rem;">
+      <p>{{ errorMessage() }}</p>
+      <button type="button" class="btn-primary" (click)="retry()">Retry</button>
+    </article>
+  }
+
+  <article class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Customer</th>
+          <th>Issue Type</th>
+          <th>Priority</th>
+          <th>Agent</th>
+          <th>Status</th>
+          <th>Last Activity</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (ticket of tickets(); track ticket.ticketId) {
+          <tr [routerLink]="['/tickets', ticket.ticketId]" class="row-link">
+            <td>{{ ticket.id }}</td>
+            <td>
+              <app-customer-badge
+                [name]="ticket.customer"
+                [channel]="ticket.customerChannel"
+                [status]="ticket.customerStatus"
+                [hideStatus]="true"
+              />
+            </td>
+            <td>{{ ticket.issueType }}</td>
+            <td>
+              <span class="priority-dot" [class]="'priority-dot ' + ticket.priority"></span>
+              {{ ticket.priority | titlecase }}
+            </td>
+            <td><span class="agent-pill">{{ ticket.agentInitials }}</span></td>
+            <td>
+              <span class="status" [class]="'status ' + ticket.status">{{ ticket.status | uppercase }}</span>
+            </td>
+            <td>{{ ticket.lastActivity }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </article>
+
+  <a class="new-ticket-float" routerLink="/tickets/create">+ New Ticket</a>
+
+  <footer class="footer-status">
+    <span><i class="dot"></i> System Status: Operational</span>
+    <span>Page {{ page() }} of {{ totalPages() }}</span>
+    <span>
+      <button type="button" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">Prev</button>
+      <button type="button" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">Next</button>
+    </span>
+  </footer>
+</section>

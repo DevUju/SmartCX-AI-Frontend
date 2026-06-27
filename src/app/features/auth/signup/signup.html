@@ -1,58 +1,108 @@
-<div class="container">
+<div class="signup-wrapper">
+  <div class="signup-background"></div>
+
   <div class="signup-container">
-  <h2 class="app-title">SmartCX AI</h2>
-  <p class="tagline">Stay focused, stay productive.</p>
+    <!-- Header -->
+    <div class="signup-header">
+      <div class="logo-circle">
+        <mat-icon class="logo-icon">rocket_launch</mat-icon>
+      </div>
+      <h1 class="app-title">SmartCX AI</h1>
+      <p class="tagline">Join thousands of productive teams</p>
+    </div>
 
-  <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="signup-form">
-    <mat-form-field appearance="outline" class="form-field">
-      <mat-label>Full Name</mat-label>
-      <input matInput formControlName="fullName">
-    </mat-form-field>
+    <!-- Form -->
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="signup-form">
+      <!-- Full Name -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Full Name</mat-label>
+        <mat-icon matPrefix class="field-icon">person</mat-icon>
+        <input matInput formControlName="fullName" placeholder="John Doe">
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" class="form-field">
-      <mat-label>Email Address</mat-label>
-      <input matInput formControlName="email">
-    </mat-form-field>
+      <!-- Email -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Email Address</mat-label>
+        <mat-icon matPrefix class="field-icon">email</mat-icon>
+        <input matInput formControlName="email" type="email" placeholder="you@example.com">
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" class="form-field">
-      <mat-label>Password</mat-label>
-      <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
-      <button mat-icon-button matSuffix (click)="hide = !hide" type="button">
-        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      <!-- Password -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Password</mat-label>
+        <mat-icon matPrefix class="field-icon">lock</mat-icon>
+        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
+        <button mat-icon-button matSuffix (click)="hide = !hide" type="button" class="visibility-btn">
+          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!-- Confirm Password -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Confirm Password</mat-label>
+        <mat-icon matPrefix class="field-icon">lock_clock</mat-icon>
+        <input matInput type="password" formControlName="confirmPassword">
+      </mat-form-field>
+
+      <!-- Persona Dropdown -->
+      <mat-form-field appearance="outline" class="form-field persona-field">
+        <mat-label>Select Your Role</mat-label>
+        <mat-icon matPrefix class="field-icon">badge</mat-icon>
+        <mat-select formControlName="persona" panelClass="persona-panel">
+          <mat-select-trigger>
+            {{ getPersonaLabel(signupForm.get('persona')?.value) }}
+          </mat-select-trigger>
+          <mat-option value="manager" class="persona-option">
+            <mat-icon class="option-icon">manage_accounts</mat-icon>
+            <span>Manager</span>
+            <span class="option-desc">Oversee teams and projects</span>
+          </mat-option>
+          <mat-option value="freelancer" class="persona-option">
+            <mat-icon class="option-icon">work_outline</mat-icon>
+            <span>Freelancer</span>
+            <span class="option-desc">Work independently</span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Error Message -->
+      <div *ngIf="error" class="error-message">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error }}</span>
+      </div>
+
+      <!-- Sign Up Button -->
+      <button 
+        mat-raised-button 
+        color="primary" 
+        class="signup-btn" 
+        type="submit" 
+        [disabled]="!signupForm.valid || loading">
+        <mat-icon *ngIf="loading" class="spinner">hourglass_empty</mat-icon>
+        <span>{{ loading ? 'Creating Account...' : 'Create Account' }}</span>
       </button>
-    </mat-form-field>
+    </form>
 
-    <mat-form-field appearance="outline" class="form-field">
-      <mat-label>Confirm Password</mat-label>
-      <input matInput type="password" formControlName="confirmPassword">
-    </mat-form-field>
+    <!-- Divider -->
+    <div class="divider">
+      <span>Or</span>
+    </div>
 
-    <mat-form-field appearance="outline" class="form-field">
-      <mat-label>Persona</mat-label>
-      <mat-select formControlName="persona">
-        <mat-option value="manager">Manager</mat-option>
-        <mat-option value="freelancer">Freelancer</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <button mat-raised-button color="primary" class="signup-btn" type="submit" [disabled]="!signupForm.valid">
-      Sign Up
+    <!-- Social Sign Up -->
+    <button mat-stroked-button class="social-btn google-btn" type="button">
+      <mat-icon>account_circle</mat-icon>
+      <span>Continue with Google</span>
     </button>
-  </form>
 
-  <p class="login-link">
-    Already have an account?
-    <a routerLink="/login" class="link-btn">Log In</a>
-  </p>
+    <!-- Login Link -->
+    <p class="login-link">
+      Already have an account?
+      <a routerLink="/login" class="link-btn">Log In</a>
+    </p>
 
-
-  <button mat-stroked-button class="google-btn">
-    <mat-icon>account_circle</mat-icon> Sign up with Google
-  </button>
-
-  <p class="legal-text">
-    By signing up, you agree to our <a href="#">Terms</a> & <a href="#">Privacy Policy</a>.
-  </p>
- </div>
-
+    <!-- Legal Text -->
+    <p class="legal-text">
+      By signing up, you agree to our <a href="#">Terms</a> & <a href="#">Privacy Policy</a>.
+    </p>
+  </div>
 </div>

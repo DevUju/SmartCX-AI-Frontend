@@ -1,0 +1,60 @@
+<section class="auth-shell">
+  <div class="login-card">
+    <header class="login-header">
+      <div class="logo-mark">SCX</div>
+      <h1>SmartCX AI</h1>
+      <p>Support team management for Nigerian SMEs</p>
+    </header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="field">
+        <label for="identity">Email or Phone Number</label>
+        <input id="identity" type="text" formControlName="identity" />
+        @if (form.controls.identity.touched && form.controls.identity.invalid) {
+          <small class="error-text">Identity field is required.</small>
+        }
+      </div>
+
+      <div class="password-head">
+        <label for="password">Password</label>
+        <a class="auth-link" href="#">Forgot?</a>
+      </div>
+
+      <div class="field password-field">
+        <input
+          id="password"
+          [type]="showPassword() ? 'text' : 'password'"
+          formControlName="password"
+        />
+        <button type="button" class="toggle" (click)="togglePasswordVisibility()">
+          {{ showPassword() ? 'Hide' : 'Show' }}
+        </button>
+      </div>
+      @if (form.controls.password.touched && form.controls.password.invalid) {
+        <small class="error-text">Password must be at least 8 characters.</small>
+      }
+
+      <button class="btn-primary login-btn" type="submit" [disabled]="!canSubmit">
+        {{ isSubmitting() ? 'LOADING...' : 'LOGIN' }}
+      </button>
+
+      @if (errorMessage()) {
+        <small class="error-text">{{ errorMessage() }}</small>
+      }
+    </form>
+
+    <p class="signup-text">
+      New to SmartCX?
+      <a class="auth-link" routerLink="/register">Create account</a>
+    </p>
+
+    <div class="badges">
+      <span>Trusted Partner</span>
+      <span>Secure Node</span>
+    </div>
+
+    <footer class="footer-copy">
+      © 2024 SmartCX AI Technologies. All rights reserved.
+    </footer>
+  </div>
+</section>

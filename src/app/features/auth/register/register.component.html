@@ -1,0 +1,83 @@
+<section class="auth-shell register-shell">
+  <div class="register-layout">
+    <aside class="pitch">
+      <p class="eyebrow">Build Faster</p>
+      <h1>Welcome to Nigeria's smartest customer engine.</h1>
+      <p>
+        Bring all your support channels into one AI-ready workspace designed for
+        response speed, operational clarity, and measurable customer outcomes.
+      </p>
+
+      <div class="feature-cards">
+        <article>
+          <h3>Fast Setup</h3>
+          <p>Launch your support desk in minutes with guided onboarding.</p>
+        </article>
+        <article>
+          <h3>Local First</h3>
+          <p>Built for Nigerian support operations, workflows, and growth teams.</p>
+        </article>
+      </div>
+    </aside>
+
+    <section class="register-form-wrap">
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="field">
+          <label for="businessName">Business Name</label>
+          <input id="businessName" type="text" formControlName="businessName" />
+        </div>
+
+        <div class="field">
+          <label for="ownerName">Owner Name</label>
+          <input id="ownerName" type="text" formControlName="ownerName" />
+        </div>
+
+        <div class="field with-prefix">
+          <label for="phone">Phone Number</label>
+          <div class="phone-wrap">
+            <span>+234</span>
+            <input id="phone" type="tel" formControlName="phone" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="category">Category</label>
+          <select id="category" formControlName="category">
+            @for (category of categories; track category) {
+              <option [value]="category">{{ category }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" formControlName="email" />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" formControlName="password" />
+        </div>
+
+        @if (form.touched && form.invalid) {
+          <small class="error-text">Please fill all fields correctly before submitting.</small>
+        }
+
+        <button class="btn-primary" type="submit" [disabled]="!canSubmit">
+          {{ isSubmitting() ? 'CREATING...' : 'CREATE ACCOUNT →' }}
+        </button>
+
+        @if (errorMessage()) {
+          <small class="error-text">{{ errorMessage() }}</small>
+        }
+
+        <p class="login-callout">
+          Already have an account?
+          <a class="auth-link" routerLink="/login">Login</a>
+        </p>
+      </form>
+
+      <footer class="footer-copy">POWERED BY SMARTCX AI © 2024 • LAGOS HUB</footer>
+    </section>
+  </div>
+</section>

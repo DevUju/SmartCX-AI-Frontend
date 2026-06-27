@@ -1,0 +1,89 @@
+<section class="workspace-layout">
+  <aside class="left-col">
+    <article class="card">
+      <h2>Customer Profile</h2>
+      <app-customer-badge
+        [name]="customerName()"
+        [channel]="customerChannel()"
+        [status]="customerStatus()"
+      />
+      <p>{{ customerEmail() }}</p>
+      <p>{{ customerPhone() }}</p>
+      <p>Location: {{ customerLocation() }}</p>
+    </article>
+
+    <article class="card">
+      <h2>Order Summary</h2>
+      <p>Issue ID: {{ ticket()?.issueId || '--' }}</p>
+      <p>Items: 2</p>
+      <p>Total: N {{ customerTotalSpent() ?? '--' }}</p>
+      <button type="button" class="btn-lite">View Logistics</button>
+    </article>
+  </aside>
+
+  <main class="center-col">
+    @if (errorMessage()) {
+      <article class="ai-card">
+        <p>{{ errorMessage() }}</p>
+        <button type="button" class="btn-primary" (click)="retry()">Retry</button>
+      </article>
+    }
+
+    <article class="ai-card">
+      <h2>AI Insight Summary</h2>
+      <p>{{ ticket()?.aiInsightSummary || 'No AI insight available for this ticket.' }}</p>
+    </article>
+
+    <article class="chat-card">
+      @for (message of messages(); track message.text) {
+        <div class="msg" [class.customer]="message.sender === 'customer'" [class.agent]="message.sender === 'agent'" [class.note]="message.sender === 'note'">
+          {{ message.text }}
+        </div>
+      }
+
+      <div class="reply-tabs">
+        <button type="button">Reply</button>
+        <button type="button">Internal Note</button>
+      </div>
+
+      <div class="composer">
+        <input
+          type="text"
+          placeholder="Type message..."
+          [ngModel]="draftMessage()"
+          (ngModelChange)="draftMessage.set($event)"
+        />
+        <button type="button" class="btn-primary" [disabled]="saving()" (click)="sendMessage()">
+          {{ saving() ? 'SENDING...' : 'SEND MESSAGE' }}
+        </button>
+      </div>
+    </article>
+  </main>
+
+  <aside class="right-col">
+    <article class="card">
+      <h2>Ticket Metadata</h2>
+      <label>Status</label>
+      <div class="segmented">
+        <button type="button" (click)="setStatus('open')">Open</button>
+        <button type="button" (click)="setStatus('pending')">Pending</button>
+        <button type="button" (click)="setStatus('escalated')">Escalated</button>
+      </div>
+      <label>Priority</label>
+      <select>
+        <option>{{ ticket()?.priority || 'High' }}</option>
+      </select>
+      <label>Assigned Agent</label>
+      <input type="text" [value]="ticket()?.assignedAgentId || 'Unassigned'" readonly />
+    </article>
+
+    <article class="card">
+      <h2>Quick Actions</h2>
+      <button type="button" class="btn-lite">Set Reminder</button>
+      <button type="button" class="btn-lite">Transfer Ticket</button>
+      <button type="button" class="btn-lite">Full History</button>
+    </article>
+
+    <a class="resolve-btn" [routerLink]="['/tickets', ticket()?.id, 'resolution']">RESOLVE TICKET</a>
+  </aside>
+</section>

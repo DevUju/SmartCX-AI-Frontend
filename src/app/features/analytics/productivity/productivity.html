@@ -3,10 +3,12 @@
   <!-- Header -->
   <div class="header-row">
     <h2 class="header">Focus</h2>
-    <button mat-icon-button class="settings-btn">
+    <button mat-icon-button class="settings-btn" routerLink="/profile">
       <mat-icon>settings</mat-icon>
     </button>
   </div>
+
+  <div *ngIf="error()" class="error-message">{{ error() }}</div>
 
   <!-- Progress -->
   <mat-progress-bar mode="determinate" [value]="progress()"></mat-progress-bar>
@@ -73,7 +75,7 @@
     <mat-icon>work</mat-icon>
     Projects
   </button>
-  <button mat-button routerLink="/productivity" routerLinkActive="active">
+  <button mat-button routerLink="/analytics" routerLinkActive="active">
     <mat-icon>analytics</mat-icon>
     Stats
   </button>

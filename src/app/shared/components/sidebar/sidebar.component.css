@@ -1,0 +1,138 @@
+.sidebar {
+  width: 13.5rem;
+  background: #111111;
+  color: #f2f2f2;
+  min-height: 100vh;
+  padding: 0.5rem 0.6rem 0.35rem;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  border-right: 1px solid #2e2e2e;
+}
+
+.brand {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  margin-bottom: 0.45rem;
+}
+
+.brand-mark {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 0.7rem;
+  display: grid;
+  place-items: center;
+  background: #f2f2f2;
+  color: #121212;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.brand h2 {
+  margin: 0;
+  font-size: 0.96rem;
+}
+
+.brand p {
+  margin: 0.12rem 0 0;
+  color: #bdbdbd;
+  font-size: 0.8rem;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.7rem;
+  text-decoration: none;
+  color: #d4d4d4;
+  padding: 0.48rem 0.56rem;
+  font-size: 0.88rem;
+}
+
+.nav-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 1px solid #4a4a4a;
+  border-radius: 0.35rem;
+  display: inline-grid;
+  place-items: center;
+  color: #c6c6c6;
+  background: #1b1b1b;
+  flex: 0 0 auto;
+}
+
+.nav-icon svg {
+  width: 0.78rem;
+  height: 0.78rem;
+}
+
+nav a.active,
+nav a:hover {
+  color: #fff;
+  background: #242424;
+}
+
+nav a.active .nav-icon,
+nav a:hover .nav-icon {
+  border-color: #6f6f6f;
+  color: #f1f1f1;
+  background: #2a2a2a;
+}
+
+.status-card {
+  margin-top: 0.3rem;
+  border: 1px solid #2f2f2f;
+  border-radius: 0.8rem;
+  padding: 0.52rem;
+}
+
+.status-card p {
+  margin: 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #adadad;
+}
+
+.status-card div {
+  margin-top: 0.45rem;
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  font-size: 0.86rem;
+}
+
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #4acc7e;
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 100%;
+    min-height: auto;
+    grid-template-rows: auto;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .status-card {
+    margin-top: 0;
+  }
+}

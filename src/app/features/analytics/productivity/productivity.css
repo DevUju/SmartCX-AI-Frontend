@@ -2,7 +2,8 @@
   padding: 12px 16px;
   min-height: 100vh;
   box-sizing: border-box;
-  padding-bottom: 60px; /* space for nav */
+  padding-bottom: 100px; /* space for nav */
+  background: #f8f9fa;
 }
 
 /* Header */
@@ -88,7 +89,7 @@ mat-progress-bar {
 
 .bar-fill {
   width: 14px;
-  background: #1976d2;
+  background: #3b62ad;
   border-radius: 4px;
   transition: height 0.3s;
 }
@@ -99,7 +100,7 @@ mat-progress-bar {
 }
 
 .weekly-change {
-  color: #1976d2;
+  color: #3b62ad;
   font-weight: 600;
 }
 

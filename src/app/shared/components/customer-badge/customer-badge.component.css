@@ -1,0 +1,82 @@
+.customer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  min-width: 0;
+}
+
+/* Avatar circle */
+.avatar {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #fff;
+  flex: 0 0 auto;
+  letter-spacing: 0.02em;
+}
+
+.badge-name {
+  font-size: 0.88rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Base chip */
+.chip {
+  font-size: 0.68rem;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.18rem 0.48rem;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+/* Channel chips */
+.ch-whatsapp {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+.ch-instagram {
+  background: #fce7f3;
+  color: #9d174d;
+  border-color: #f9a8d4;
+}
+
+.ch-email {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+/* Status chips */
+.st-new {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #cbd5e1;
+}
+
+.st-active {
+  background: #d1fae5;
+  color: #065f46;
+  border-color: #6ee7b7;
+}
+
+.st-vip {
+  background: #fef9c3;
+  color: #854d0e;
+  border-color: #fde047;
+}
+
+.st-churned {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #fca5a5;
+}

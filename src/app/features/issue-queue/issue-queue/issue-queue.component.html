@@ -1,0 +1,126 @@
+<section class="issue-queue">
+  <header class="queue-header">
+    <div>
+      <h1>Issue Queue</h1>
+      <p>Monitor incoming complaints and convert priority issues into tickets.</p>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-lite" (click)="applyFilters()">Apply</button>
+      <a class="btn-primary" [routerLink]="['/tickets/create']">+ NEW TICKET</a>
+    </div>
+  </header>
+
+  <article class="table-wrap" style="padding: 1rem; display: grid; gap: 0.75rem;">
+    <div style="display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
+      <input
+        type="text"
+        placeholder="Search issues"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="onSearchInput($event)"
+      />
+
+      <select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event); applyFilters()">
+        @for (status of statuses; track status) {
+          <option [value]="status">{{ status | titlecase }}</option>
+        }
+      </select>
+
+      <select [ngModel]="selectedPriority()" (ngModelChange)="selectedPriority.set($event); applyFilters()">
+        @for (priority of priorities; track priority) {
+          <option [value]="priority">{{ priority | titlecase }}</option>
+        }
+      </select>
+    </div>
+    <button type="button" class="btn-primary" style="width: fit-content;" (click)="applyFilters()">Search</button>
+  </article>
+
+  @if (errorMessage()) {
+    <article class="table-wrap" style="padding: 1rem;">
+      <p>{{ errorMessage() }}</p>
+      <button type="button" class="btn-primary" (click)="retry()">Retry</button>
+    </article>
+  }
+
+  <div class="tabs">
+    @for (tab of tabs(); track tab.label) {
+      <button type="button">{{ tab.label }} ({{ tab.count }})</button>
+    }
+  </div>
+
+  <article class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Priority</th>
+          <th>Customer</th>
+          <th>Channel</th>
+          <th>Message Preview</th>
+          <th>Tag</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (issue of issues(); track issue.id) {
+          <tr>
+            <td>
+              <span class="priority" [class.high]="issue.priority === 'HIGH' || issue.priority === 'URGENT'">
+                {{ issue.priority === 'HIGH' || issue.priority === 'URGENT' ? '! ' + issue.priority : '- ' + issue.priority }}
+              </span>
+            </td>
+            <td>
+              <app-customer-badge
+                [name]="issue.customer"
+                [channel]="issue.customerChannel"
+                [status]="issue.customerStatus"
+                [hideStatus]="true"
+              />
+            </td>
+            <td>
+              <app-customer-badge
+                [name]="''"
+                [channel]="issue.channel"
+                [hideStatus]="true"
+              />
+            </td>
+            <td>{{ issue.preview }}</td>
+            <td>{{ issue.tag }}</td>
+            <td>
+              <span class="status" [class.pending]="issue.status === 'PENDING' || issue.status === 'CONVERTED'">
+                {{ issue.status }}
+              </span>
+            </td>
+            <td>
+              <a class="view-btn" [routerLink]="['/issues', issue.id]">VIEW ISSUE</a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </article>
+
+  <footer class="pagination-row">
+    <p>
+      Page {{ page() }} of {{ totalPages() }} • Showing {{ issues().length }} of {{ total() }} results
+    </p>
+    <div>
+      <button type="button" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">← Previous</button>
+      <button type="button" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">Next →</button>
+    </div>
+  </footer>
+
+  <section class="insights-grid">
+    <article>
+      <h3>AI Insights</h3>
+      <p>Delivery-related complaints increased 18% this afternoon.</p>
+    </article>
+    <article>
+      <h3>Team Load</h3>
+      <p>Two agents are under optimal load, one is approaching threshold.</p>
+    </article>
+    <article>
+      <h3>Smart Respond</h3>
+      <p>Use payment discrepancy template for faster first-response handling.</p>
+    </article>
+  </section>
+</section>

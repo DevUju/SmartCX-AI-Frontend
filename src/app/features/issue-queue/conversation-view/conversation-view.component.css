@@ -1,0 +1,183 @@
+.conversation-layout {
+  display: grid;
+  grid-template-columns: 1.5fr 0.9fr;
+  gap: 0.8rem;
+}
+
+.chat-panel,
+.customer-card,
+.notes {
+  border: 1px solid #dad4c8;
+  border-radius: 1rem;
+  background: #fff;
+}
+
+.chat-panel {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 72vh;
+}
+
+.chat-panel header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem;
+  border-bottom: 1px solid #ece5d9;
+}
+
+.chat-panel h1 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.chips {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.chips span {
+  border-radius: 999px;
+  border: 1px solid #d8d1c4;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+}
+
+.chips .live {
+  background: #111;
+  color: #fff;
+}
+
+.messages {
+  padding: 0.8rem;
+  display: grid;
+  gap: 0.6rem;
+  align-content: start;
+}
+
+.bubble-row {
+  display: flex;
+}
+
+.bubble-row.right {
+  justify-content: end;
+}
+
+.bubble {
+  max-width: 75%;
+  border-radius: 0.8rem;
+  border: 1px solid #e6ded0;
+  padding: 0.55rem 0.68rem;
+}
+
+.bubble.dark {
+  background: #161616;
+  color: #fff;
+  border-color: #161616;
+}
+
+.bubble p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.bubble small {
+  display: inline-block;
+  margin-top: 0.35rem;
+  opacity: 0.72;
+}
+
+.composer {
+  border-top: 1px solid #ece5d9;
+  padding: 0.75rem;
+}
+
+.composer input {
+  width: 100%;
+  border: 1px solid #dbd5c8;
+  border-radius: 0.75rem;
+  padding: 0.72rem;
+}
+
+.composer-actions {
+  margin-top: 0.55rem;
+  display: flex;
+  justify-content: end;
+  gap: 0.4rem;
+}
+
+.composer-actions button {
+  border: 1px solid #d7d0c3;
+  background: #fff;
+  border-radius: 0.6rem;
+  padding: 0.42rem 0.58rem;
+}
+
+.customer-panel {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.customer-card {
+  padding: 0.8rem;
+}
+
+.avatar {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  background: #111;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 0.76rem;
+}
+
+.customer-card h2 {
+  margin: 0.6rem 0 0;
+  font-size: 1.1rem;
+}
+
+.customer-card p {
+  margin: 0.2rem 0 0.55rem;
+  color: var(--ink-soft);
+}
+
+dl {
+  margin: 0;
+}
+
+dl div {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ece5d8;
+  padding: 0.42rem 0;
+  font-size: 0.86rem;
+}
+
+.customer-card button {
+  width: 100%;
+  margin-top: 0.55rem;
+}
+
+.notes {
+  border-style: dashed;
+  padding: 0.8rem;
+}
+
+.notes h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.notes p {
+  margin: 0.4rem 0 0;
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+}
+
+@media (max-width: 1080px) {
+  .conversation-layout {
+    grid-template-columns: 1fr;
+  }
+}

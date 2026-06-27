@@ -3,6 +3,11 @@
   <h2 class="app-title">Welcome Back</h2>
   <p class="tagline">Log in to continue</p>
 
+  <div *ngIf="error" class="error-alert">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
     <mat-form-field appearance="outline" class="form-field">
       <mat-label>Email Address</mat-label>
@@ -17,8 +22,9 @@
       </button>
     </mat-form-field>
 
-    <button mat-raised-button color="primary" class="login-btn" type="submit" [disabled]="!loginForm.valid">
-      Log In
+    <button mat-raised-button color="primary" class="login-btn" type="submit" [disabled]="!loginForm.valid || loading">
+      <mat-icon *ngIf="loading" class="spinner">hourglass_empty</mat-icon>
+      <span>{{ loading ? 'Logging in...' : 'Log In' }}</span>
     </button>
   </form>
 
@@ -26,7 +32,6 @@
     Don’t have an account?
     <a routerLink="/signup" class="link-btn">Sign Up</a>
   </p>
-
 
   <button mat-stroked-button class="google-btn">
     <mat-icon>account_circle</mat-icon> Log in with Google

@@ -3,7 +3,7 @@
   <!-- Header -->
   <div class="header-row">
     <h2 class="header">Focus</h2>
-    <button mat-icon-button class="settings-btn">
+      <button mat-icon-button class="settings-btn" routerLink="/profile">
       <mat-icon>settings</mat-icon>
     </button>
   </div>
@@ -15,39 +15,44 @@
   <!-- Quick Task -->
   <mat-form-field appearance="outline" class="quick-task">
     <mat-label>Add a quick task…</mat-label>
-    <input matInput />
-    <button mat-icon-button matSuffix>
+    <input matInput [(ngModel)]="quickTaskTitle" (keyup.enter)="createQuickTask()" />
+    <button mat-icon-button matSuffix (click)="createQuickTask()">
       <mat-icon>add</mat-icon>
     </button>
   </mat-form-field>
 
+  <div *ngIf="error()" class="error-message">{{ error() }}</div>
+
   <!-- Overdue -->
   <h3 class="section">OVERDUE</h3>
+  <p *ngIf="!overdue().length" class="progress-label">No overdue tasks</p>
   <div *ngFor="let task of overdue()" class="task-item">
     <span class="title">{{ task.title }}</span>
-    <span class="tag">{{ task.tag }}</span>
-    <span class="date">{{ task.date }}</span>
+    <span class="tag">{{ getTaskTag(task) }}</span>
+    <span class="date">{{ formatTaskDate(task) }}</span>
   </div>
 
   <!-- Today -->
   <h3 class="section">TODAY</h3>
+  <p *ngIf="!today().length" class="progress-label">No tasks for today</p>
   <div *ngFor="let task of today()" class="task-item">
-    <mat-checkbox>{{ task.title }}</mat-checkbox>
-    <span class="tag">{{ task.tag }}</span>
-    <span class="time">{{ task.time }}</span>
+    <mat-checkbox (change)="completeTask(task.id)">{{ task.title }}</mat-checkbox>
+    <span class="tag">{{ getTaskTag(task) }}</span>
+    <span class="time">{{ formatTaskTime(task) }}</span>
   </div>
 
   <h3 class="section">COMPLETED</h3>
+  <p *ngIf="!completed().length" class="progress-label">No completed tasks yet</p>
   <div *ngFor="let task of completed()" class="task-item completed">
     <mat-checkbox checked disabled></mat-checkbox>
     <span class="title done">{{ task.title }}</span>
-    <span class="tag">{{ task.tag }}</span>
+    <span class="tag">{{ getTaskTag(task) }}</span>
   </div>
 </div>
 
 
 <!-- Floating Plus -->
-<button mat-fab color="primary" class="fab-btn">
+<button mat-fab color="primary" class="fab-btn" (click)="createQuickTask()">
   <mat-icon>add</mat-icon>
 </button>
 
@@ -65,7 +70,7 @@
     <mat-icon>work</mat-icon>
     Projects
   </button>
-  <button mat-button routerLink="/productivity" routerLinkActive="active">
+  <button mat-button routerLink="/analytics" routerLinkActive="active">
     <mat-icon>insights</mat-icon>
     Stats
   </button>
