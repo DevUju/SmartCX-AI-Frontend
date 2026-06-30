@@ -9,30 +9,45 @@
     </header>
 
     @if (errorMessage()) {
-      <div class="bubble-row">
-        <div class="bubble">
-          <p>{{ errorMessage() }}</p>
-        </div>
+    <div class="bubble-row">
+      <div class="bubble">
+        <p>{{ errorMessage() }}</p>
       </div>
+    </div>
     }
 
     <div class="messages">
       @for (message of messages(); track message.time + message.text) {
-        <div class="bubble-row" [class.right]="message.sender !== 'customer'">
-          <div class="bubble" [class.dark]="message.sender !== 'customer'">
-            <p>{{ message.text }}</p>
-            <small>{{ message.time }}</small>
-          </div>
+      <div class="bubble-row" [class.right]="message.sender !== 'customer'">
+        <div class="bubble" [class.dark]="message.sender !== 'customer'">
+          <p>{{ message.text }}</p>
+          <small>{{ message.time }}</small>
         </div>
+      </div>
       }
     </div>
 
+    @if (smartReplies().length > 0) {
+    <div class="suggested-replies">
+      @for (reply of smartReplies(); track reply) {
+      <button type="button" class="suggestion-chip" (click)="useSuggestedReply(reply)">
+        {{ reply }}
+      </button>
+      }
+    </div>
+    }
+
     <footer class="composer">
-      <input type="text" placeholder="Type your response..." />
+      <input type="text" placeholder="Type your response..." [(ngModel)]="draftMessage"
+        (keydown.enter)="sendMessage()" />
       <div class="composer-actions">
-        <button type="button">Attach file</button>
-        <button type="button">Quick Replies</button>
-        <button type="button" class="btn-primary">SEND</button>
+        <button type="button" disabled title="Coming soon">Attach file</button>
+        <button type="button" [disabled]="loadingReplies()" (click)="loadSmartReplies()">
+          {{ loadingReplies() ? 'Loading...' : 'Quick Replies' }}
+        </button>
+        <button type="button" class="btn-primary" [disabled]="sending()" (click)="sendMessage()">
+          SEND
+        </button>
       </div>
     </footer>
   </article>
@@ -43,23 +58,29 @@
       <h2>{{ customerName() }}</h2>
       <p>{{ customerPhone() }}</p>
       <dl>
-        <div><dt>Status</dt><dd>Active</dd></div>
-        <div><dt>Location</dt><dd>{{ customerLocation() }}</dd></div>
-        <div><dt>Total Spent</dt><dd>N --</dd></div>
+        <div>
+          <dt>Status</dt>
+          <dd>Active</dd>
+        </div>
+        <div>
+          <dt>Location</dt>
+          <dd>{{ customerLocation() }}</dd>
+        </div>
+        <div>
+          <dt>Total Spent</dt>
+          <dd>N --</dd>
+        </div>
       </dl>
-      <a
-        class="btn-primary"
-        [routerLink]="['/tickets/create']"
-        [queryParams]="{ issueId: issueId(), customerId: customerId() }"
-      >
+      <a class="btn-primary" [routerLink]="['/tickets/create']"
+        [queryParams]="{ issueId: issueId(), customerId: customerId() }">
         Create ticket
       </a>
       <button type="button" class="btn-lite">View order history</button>
     </section>
 
-    <section class="notes">
+    <!-- <section class="notes">
       <h3>Internal Notes</h3>
       <p>Customer reported previous delay two months ago. Prioritize empathy and clear ETA.</p>
-    </section>
+    </section> -->
   </aside>
 </section>

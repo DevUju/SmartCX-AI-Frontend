@@ -12,22 +12,17 @@
 
   <article class="table-wrap" style="padding: 1rem; display: grid; gap: 0.75rem;">
     <div style="display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
-      <input
-        type="text"
-        placeholder="Search issues"
-        [ngModel]="searchTerm()"
-        (ngModelChange)="onSearchInput($event)"
-      />
+      <input type="text" placeholder="Search issues" [ngModel]="searchTerm()" (ngModelChange)="onSearchInput($event)" />
 
       <select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event); applyFilters()">
         @for (status of statuses; track status) {
-          <option [value]="status">{{ status | titlecase }}</option>
+        <option [value]="status">{{ status | titlecase }}</option>
         }
       </select>
 
       <select [ngModel]="selectedPriority()" (ngModelChange)="selectedPriority.set($event); applyFilters()">
         @for (priority of priorities; track priority) {
-          <option [value]="priority">{{ priority | titlecase }}</option>
+        <option [value]="priority">{{ priority | titlecase }}</option>
         }
       </select>
     </div>
@@ -35,15 +30,15 @@
   </article>
 
   @if (errorMessage()) {
-    <article class="table-wrap" style="padding: 1rem;">
-      <p>{{ errorMessage() }}</p>
-      <button type="button" class="btn-primary" (click)="retry()">Retry</button>
-    </article>
+  <article class="table-wrap" style="padding: 1rem;">
+    <p>{{ errorMessage() }}</p>
+    <button type="button" class="btn-primary" (click)="retry()">Retry</button>
+  </article>
   }
 
   <div class="tabs">
     @for (tab of tabs(); track tab.label) {
-      <button type="button">{{ tab.label }} ({{ tab.count }})</button>
+    <button type="button">{{ tab.label }} ({{ tab.count }})</button>
     }
   </div>
 
@@ -62,38 +57,31 @@
       </thead>
       <tbody>
         @for (issue of issues(); track issue.id) {
-          <tr>
-            <td>
-              <span class="priority" [class.high]="issue.priority === 'HIGH' || issue.priority === 'URGENT'">
-                {{ issue.priority === 'HIGH' || issue.priority === 'URGENT' ? '! ' + issue.priority : '- ' + issue.priority }}
-              </span>
-            </td>
-            <td>
-              <app-customer-badge
-                [name]="issue.customer"
-                [channel]="issue.customerChannel"
-                [status]="issue.customerStatus"
-                [hideStatus]="true"
-              />
-            </td>
-            <td>
-              <app-customer-badge
-                [name]="''"
-                [channel]="issue.channel"
-                [hideStatus]="true"
-              />
-            </td>
-            <td>{{ issue.preview }}</td>
-            <td>{{ issue.tag }}</td>
-            <td>
-              <span class="status" [class.pending]="issue.status === 'PENDING' || issue.status === 'CONVERTED'">
-                {{ issue.status }}
-              </span>
-            </td>
-            <td>
-              <a class="view-btn" [routerLink]="['/issues', issue.id]">VIEW ISSUE</a>
-            </td>
-          </tr>
+        <tr>
+          <td>
+            <span class="priority" [class.high]="issue.priority === 'HIGH' || issue.priority === 'URGENT'">
+              {{ issue.priority === 'HIGH' || issue.priority === 'URGENT' ? '! ' + issue.priority : '- ' +
+              issue.priority }}
+            </span>
+          </td>
+          <td>
+            <app-customer-badge [name]="issue.customer" [channel]="issue.customerChannel"
+              [status]="issue.customerStatus" [hideStatus]="true" />
+          </td>
+          <td>
+            <app-customer-badge [name]="''" [channel]="issue.channel" [hideStatus]="true" />
+          </td>
+          <td>{{ issue.preview }}</td>
+          <td>{{ issue.tag }}</td>
+          <td>
+            <span class="status" [class.pending]="issue.status === 'PENDING' || issue.status === 'CONVERTED'">
+              {{ issue.status }}
+            </span>
+          </td>
+          <td>
+            <a class="view-btn" [routerLink]="['/issues', issue.id]">VIEW ISSUE</a>
+          </td>
+        </tr>
         }
       </tbody>
     </table>
@@ -112,15 +100,17 @@
   <section class="insights-grid">
     <article>
       <h3>AI Insights</h3>
-      <p>Delivery-related complaints increased 18% this afternoon.</p>
+      <p>{{ aiInsight() }}</p>
     </article>
     <article>
       <h3>Team Load</h3>
-      <p>Two agents are under optimal load, one is approaching threshold.</p>
+      <!-- TODO: placeholder until agent workload tracking exists -->
+      <p>Two agents are under optimal load, one is approaching threshold.(HARDCODED PLACEHOLDER FOR NOW!!)</p>
     </article>
     <article>
       <h3>Smart Respond</h3>
-      <p>Use payment discrepancy template for faster first-response handling.</p>
+      <!-- TODO: placeholder until ticket-template suggestion logic exists -->
+      <p>Use payment discrepancy template for faster first-response handling. (HARDCODED PLACEHOLDER FOR NOW!!)</p>
     </article>
   </section>
 </section>

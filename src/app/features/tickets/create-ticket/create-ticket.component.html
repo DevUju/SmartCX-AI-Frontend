@@ -5,9 +5,9 @@
   </header>
 
   @if (errorMessage()) {
-    <article class="history-card">
-      <p>{{ errorMessage() }}</p>
-    </article>
+  <article class="history-card">
+    <p>{{ errorMessage() }}</p>
+  </article>
   }
 
   <div class="layout">
@@ -18,11 +18,11 @@
       </div>
 
       @if (issues().length === 0 && !loading()) {
-        <div class="chat-item agent">No new issues available to convert right now.</div>
+      <div class="chat-item agent">No new issues available to convert right now.</div>
       }
       @if (issues().length > 0) {
-        <div class="chat-item customer">Select an issue to prefill ticket details.</div>
-        <div class="chat-item agent">AI draft and category will populate automatically.</div>
+      <div class="chat-item customer">Select an issue to prefill ticket details.</div>
+      <div class="chat-item agent">AI draft and category will populate automatically.</div>
       }
     </article>
 
@@ -31,9 +31,9 @@
         <label>Source Issue</label>
         <select formControlName="issueId" (change)="onIssueChange($any($event.target).value)">
           @for (issue of issues(); track issue.id) {
-            <option [value]="issue.id">
-              {{ issue.id }} - {{ customerNamesByIssueId()[issue.id] || issue.customerId }} - {{ issue.category }}
-            </option>
+          <option [value]="issue.id">
+            {{ issue.id }} - {{ customerNamesByIssueId()[issue.id] || issue.customerId }} - {{ issue.category }}
+          </option>
           }
         </select>
       </div>
@@ -57,13 +57,10 @@
         <label>Priority Level</label>
         <div class="toggle-row">
           @for (priority of priorities; track priority) {
-            <button
-              type="button"
-              [class.active]="form.controls.priority.value === priority"
-              (click)="selectPriority(priority)"
-            >
-              {{ priority }}
-            </button>
+          <button type="button" [class.active]="form.controls.priority.value === priority"
+            (click)="selectPriority(priority)">
+            {{ priority }}
+          </button>
           }
         </div>
       </div>
@@ -77,6 +74,9 @@
         <button type="button" class="btn-lite" routerLink="/issues">Cancel</button>
         <button type="submit" class="btn-primary" [disabled]="!canSubmit">
           {{ isSubmitting() ? 'CREATING...' : 'Generate Ticket' }}
+        </button>
+        <button type="button" [disabled]="generatingDraft()" (click)="regenerateDraft()">
+          {{ generatingDraft() ? 'Generating...' : '✨ Generate AI Draft' }}
         </button>
       </div>
 

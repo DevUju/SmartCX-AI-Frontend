@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { CustomerService } from '../../../core/services/customer.service';
 import { IssueService } from '../../../core/services/issue.service';
+import { FormsModule } from '@angular/forms';
 
 type ChatMessage = {
   sender: 'customer' | 'agent' | 'bot';
@@ -14,7 +15,7 @@ type ChatMessage = {
 @Component({
   selector: 'app-conversation-view',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './conversation-view.component.html',
   styleUrl: './conversation-view.component.css',
 })
@@ -28,11 +29,33 @@ export class ConversationViewComponent implements OnInit {
   protected readonly loading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
 
+  protected draftMessage = '';
+  protected readonly sending = signal(false);
+
+  protected readonly smartReplies = signal<string[]>([]);
+  protected readonly loadingReplies = signal(false);
+
   constructor(
     private readonly route: ActivatedRoute,
     private readonly issueService: IssueService,
     private readonly customerService: CustomerService,
   ) {}
+
+  protected loadSmartReplies(): void {
+    this.loadingReplies.set(true);
+    this.issueService
+      .getSmartReplies(this.issueId())
+      .pipe(finalize(() => this.loadingReplies.set(false)))
+      .subscribe({
+        next: (response) => this.smartReplies.set(response.replies),
+        error: () => this.smartReplies.set([]),
+      });
+  }
+
+  protected useSuggestedReply(reply: string): void {
+    this.draftMessage = reply;
+    this.smartReplies.set([]);
+  }
 
   ngOnInit(): void {
     const issueId = this.route.snapshot.paramMap.get('id');
@@ -82,7 +105,10 @@ export class ConversationViewComponent implements OnInit {
               return {
                 sender: senderType === 'ai_bot' ? 'bot' : senderType,
                 text,
-                time: createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                time: createdAt.toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                }),
               } as ChatMessage;
             })
             .slice(0, 12);
@@ -101,6 +127,37 @@ export class ConversationViewComponent implements OnInit {
                   },
                 ],
           );
+        },
+        error: (error: Error) => {
+          this.errorMessage.set(error.message);
+        },
+      });
+  }
+
+  sendMessage(): void {
+    const content = this.draftMessage.trim();
+    if (!content || this.sending()) {
+      return;
+    }
+
+    this.sending.set(true);
+    this.issueService
+      .addMessage(this.issueId(), content)
+      .pipe(finalize(() => this.sending.set(false)))
+      .subscribe({
+        next: () => {
+          this.messages.update((current) => [
+            ...current,
+            {
+              sender: 'agent',
+              text: content,
+              time: new Date().toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              }),
+            },
+          ]);
+          this.draftMessage = '';
         },
         error: (error: Error) => {
           this.errorMessage.set(error.message);
