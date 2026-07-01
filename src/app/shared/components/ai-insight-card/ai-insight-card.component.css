@@ -1,0 +1,28 @@
+.ai-card {
+  border-radius: 1rem;
+  padding: 1rem;
+  background: #111;
+  color: #fff;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.ai-card h3,
+.ai-card p {
+  margin: 0;
+}
+
+.ai-card p {
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.ai-card button {
+  border: 0;
+  border-radius: 0.7rem;
+  background: #fff;
+  color: #111;
+  font-weight: 700;
+  padding: 0.55rem 0.8rem;
+  justify-self: start;
+  cursor: pointer;
+}

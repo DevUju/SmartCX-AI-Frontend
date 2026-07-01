@@ -1,0 +1,92 @@
+.channels-page {
+  display: grid;
+  gap: 1.4rem;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+header p {
+  margin: 0.35rem 0 0;
+  color: var(--ink-soft);
+}
+
+.channel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.channel-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  padding: 1.2rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.channel-card.connected {
+  border-color: #2a7a4f;
+  box-shadow: 0 0 0 2px rgba(39, 114, 74, 0.15);
+}
+
+.icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.55rem;
+  display: inline-grid;
+  place-items: center;
+  background: #111;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.channel-card h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.channel-card p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.credentials-form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.credentials-form input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 0.72rem;
+  padding: 0.62rem 0.7rem;
+  font: inherit;
+}
+
+footer {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+}
+
+.finish-btn {
+  min-width: 15rem;
+}
+
+footer p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+  .channel-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { CustomerService } from '../../../core/services/customer.service';
 import { Ticket, TicketStatus, TicketService } from '../../../core/services/ticket.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { TeamUser, UserService } from '../../../core/services/user.service';
 import { CustomerBadgeComponent } from '../../../shared/components/customer-badge/customer-badge.component';
 
 type Message = {
@@ -30,6 +31,18 @@ export class TicketWorkspaceComponent implements OnInit {
   protected readonly customerStatus = signal<string | null>(null);
   protected readonly customerTotalSpent = signal<number | null>(null);
   protected readonly messages = signal<Message[]>([]);
+  protected readonly availableAgents = signal<TeamUser[]>([]);
+  protected readonly selectedAgentId = signal<string | null>(null);
+  protected readonly selectedAgentName = computed(() => {
+    const agentId = this.selectedAgentId();
+    if (!agentId) {
+      return 'Unassigned';
+    }
+
+    const agent = this.availableAgents().find((user) => user.id === agentId);
+    return agent ? `${agent.firstName} ${agent.lastName}` : agentId;
+  });
+  protected readonly isAssigning = signal(false);
   protected readonly loading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly draftMessage = signal('');
@@ -40,14 +53,39 @@ export class TicketWorkspaceComponent implements OnInit {
     private readonly ticketService: TicketService,
     private readonly toastService: ToastService,
     private readonly customerService: CustomerService,
+    private readonly userService: UserService,
   ) {}
 
   ngOnInit(): void {
     this.loadTicket();
+    this.loadAgents();
   }
 
   protected retry(): void {
     this.loadTicket();
+  }
+
+  protected assignAgent(agentId: string | null): void {
+    const activeTicket = this.ticket();
+    if (!activeTicket || this.isAssigning()) {
+      return;
+    }
+
+    this.isAssigning.set(true);
+    this.ticketService
+      .assignTicket(activeTicket.id, { assignedAgentId: agentId ?? '' })
+      .pipe(finalize(() => this.isAssigning.set(false)))
+      .subscribe({
+        next: (ticket) => {
+          this.ticket.set(ticket);
+          this.selectedAgentId.set(ticket.assignedAgentId ?? null);
+          this.toastService.success('Ticket assigned successfully.');
+        },
+        error: (error: Error) => {
+          this.errorMessage.set(error.message);
+          this.toastService.error(error.message);
+        },
+      });
   }
 
   protected setStatus(status: TicketStatus): void {
@@ -126,6 +164,7 @@ export class TicketWorkspaceComponent implements OnInit {
           });
 
           this.ticket.set(ticket);
+          this.selectedAgentId.set(ticket.assignedAgentId ?? null);
           this.messages.set(
             ticket.messages.map((message) => ({
               sender:
@@ -143,5 +182,16 @@ export class TicketWorkspaceComponent implements OnInit {
           this.toastService.error(error.message);
         },
       });
+  }
+
+  private loadAgents(): void {
+    this.userService.listUsers().subscribe({
+      next: (users) => {
+        this.availableAgents.set(users.filter((user) => user.role === 'agent'));
+      },
+      error: (error: Error) => {
+        this.toastService.error(error.message);
+      },
+    });
   }
 }

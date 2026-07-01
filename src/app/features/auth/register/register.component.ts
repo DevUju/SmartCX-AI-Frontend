@@ -57,7 +57,7 @@ export class RegisterComponent {
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {
-          void this.router.navigateByUrl('/dashboard');
+          void this.router.navigateByUrl('/onboarding/channels');
         },
         error: (error: Error) => {
           this.errorMessage.set(error.message);

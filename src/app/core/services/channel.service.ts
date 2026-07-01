@@ -40,4 +40,10 @@ export class ChannelService {
       .post<Channel>(`${API_BASE_URL}/channels/connect`, payload)
       .pipe(this.errorService.handleHttpError<Channel>('Connect channel'));
   }
+
+  disconnectChannel(type: ChannelType): Observable<Channel> {
+    return this.http
+      .post<Channel>(`${API_BASE_URL}/channels/${type}/disconnect`, {})
+      .pipe(this.errorService.handleHttpError<Channel>('Disconnect channel'));
+  }
 }

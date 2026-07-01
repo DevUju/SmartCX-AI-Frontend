@@ -48,7 +48,12 @@ export class ResolutionSummaryComponent implements OnInit {
   protected markResolved(): void {
     this.form.markAllAsTouched();
     const activeTicket = this.ticket();
-    if (!activeTicket || !this.form.valid) {
+    if (!activeTicket) {
+      return;
+    }
+
+    if (!this.form.valid) {
+      this.errorMessage.set('Please provide a valid resolution summary with at least 10 characters.');
       return;
     }
 

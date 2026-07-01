@@ -74,7 +74,13 @@
         <option>{{ ticket()?.priority || 'High' }}</option>
       </select>
       <label>Assigned Agent</label>
-      <input type="text" [value]="ticket()?.assignedAgentId || 'Unassigned'" readonly />
+      <select [ngModel]="selectedAgentId()" (ngModelChange)="assignAgent($event)">
+        <option [ngValue]="null">Unassigned</option>
+        <option *ngFor="let agent of availableAgents()" [ngValue]="agent.id">
+          {{ agent.firstName }} {{ agent.lastName }}
+        </option>
+      </select>
+      <p class="small-text">Current: {{ selectedAgentName() }}</p>
     </article>
 
     <article class="card">

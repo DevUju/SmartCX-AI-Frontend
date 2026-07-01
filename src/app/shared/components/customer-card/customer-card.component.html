@@ -1,0 +1,10 @@
+<article class="customer-card">
+  <h3>{{ name() }}</h3>
+  <ul>
+    <li><span>Phone</span><strong>{{ phone() || 'N/A' }}</strong></li>
+    <li><span>Email</span><strong>{{ email() || 'N/A' }}</strong></li>
+    <li><span>Location</span><strong>{{ location() || 'N/A' }}</strong></li>
+    <li><span>Status</span><strong>{{ status() || 'N/A' }}</strong></li>
+    <li><span>Total Spent</span><strong>{{ totalSpent() ?? 0 | currency: 'NGN':'symbol':'1.0-0' }}</strong></li>
+  </ul>
+</article>

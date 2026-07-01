@@ -1,0 +1,64 @@
+<section class="channels-page">
+  <header>
+    <h1>Connect Sales Channels</h1>
+    <p>Plug in your top channels now. You can expand from settings any time.</p>
+  </header>
+
+  <div class="channel-grid">
+    @for (channel of channels; track channel.type) {
+      <article class="channel-card" [class.connected]="connected()[channel.type]">
+        <span class="icon">{{ channel.icon }}</span>
+        <h2>{{ channel.title }}</h2>
+        <p>{{ channel.description }}</p>
+
+        @if (channel.type === 'whatsapp') {
+          <form [formGroup]="whatsappForm" class="credentials-form" novalidate>
+            <input type="text" placeholder="Phone Number ID" formControlName="phoneNumberId" />
+            <input type="password" placeholder="Access Token" formControlName="accessToken" />
+            <input
+              type="text"
+              placeholder="Webhook Verify Token"
+              formControlName="webhookVerifyToken"
+            />
+          </form>
+        }
+
+        @if (channel.type === 'instagram') {
+          <form [formGroup]="instagramForm" class="credentials-form" novalidate>
+            <input type="text" placeholder="App ID" formControlName="appId" />
+            <input type="password" placeholder="App Secret" formControlName="appSecret" />
+            <input type="password" placeholder="Page Access Token" formControlName="pageAccessToken" />
+          </form>
+        }
+
+        @if (channel.type === 'email') {
+          <form [formGroup]="emailForm" class="credentials-form" novalidate>
+            <input type="text" placeholder="SMTP Host" formControlName="smtpHost" />
+            <input type="text" placeholder="SMTP Port" formControlName="smtpPort" />
+            <input type="email" placeholder="SMTP Username" formControlName="smtpUser" />
+            <input type="password" placeholder="SMTP Password" formControlName="smtpPassword" />
+            <input type="email" placeholder="Sender Email" formControlName="senderEmail" />
+          </form>
+        }
+
+        <button
+          type="button"
+          class="btn-primary"
+          [disabled]="isSubmitting() || connected()[channel.type] || isChannelFormInvalid(channel.type)"
+          (click)="connectChannel(channel.type)"
+        >
+          {{ connected()[channel.type] ? 'CONNECTED' : 'CONNECT' }}
+        </button>
+      </article>
+    }
+  </div>
+
+  @if (errorMessage()) {
+    <p class="error-text">{{ errorMessage() }}</p>
+  }
+
+  <footer>
+    <button type="button" class="btn-primary finish-btn" (click)="finishSetup()">FINISH SETUP</button>
+    <p>You can add more channels later from your dashboard settings.</p>
+  </footer>
+</section>

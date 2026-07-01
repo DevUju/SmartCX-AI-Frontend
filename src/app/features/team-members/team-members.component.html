@@ -1,0 +1,92 @@
+<section class="team-page">
+  <header class="team-header">
+    <div>
+      <h1>Team Members</h1>
+      <p>Manage agent/admin access and invite new members to your support operation.</p>
+    </div>
+    <a routerLink="/settings" class="settings-link">Back to Settings</a>
+  </header>
+
+  <article class="panel invite-panel">
+    <h2>Invite Team Member</h2>
+    <form [formGroup]="inviteForm" (ngSubmit)="inviteUser()" novalidate>
+      <div class="invite-grid">
+        <input type="text" placeholder="First Name" formControlName="firstName" />
+        <input type="text" placeholder="Last Name" formControlName="lastName" />
+        <input type="email" placeholder="Email" formControlName="email" />
+        <select formControlName="role">
+          @for (option of roleOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+        <input type="text" placeholder="Temporary Password" formControlName="temporaryPassword" />
+      </div>
+      <button type="submit" class="btn-primary" [disabled]="inviting()">
+        {{ inviting() ? 'INVITING...' : 'INVITE USER' }}
+      </button>
+    </form>
+  </article>
+
+  <article class="panel">
+    <div class="table-head">
+      <h2>Team Members</h2>
+      <input
+        type="search"
+        placeholder="Search by name, email, role"
+        [value]="searchTerm()"
+        (input)="setSearch($any($event.target).value)"
+      />
+    </div>
+
+    @if (loading()) {
+      <p>Loading team members...</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (member of filteredUsers(); track member.id) {
+            <tr>
+              <td>{{ member.firstName }} {{ member.lastName }}</td>
+              <td>{{ member.email }}</td>
+              <td>
+                <select #roleSelect [value]="member.role">
+                  @for (option of roleOptions; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+              </td>
+              <td>
+                <select #statusSelect [value]="member.isOnline ? 'online' : 'offline'">
+                  <option value="online">ONLINE</option>
+                  <option value="offline">OFFLINE</option>
+                </select>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="save-btn"
+                  [disabled]="savingMemberId() === member.id"
+                  (click)="saveMember(member, roleSelect.value, statusSelect.value)"
+                >
+                  {{ savingMemberId() === member.id ? 'Saving...' : 'Save' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+
+    @if (errorMessage()) {
+      <p class="error-text">{{ errorMessage() }}</p>
+    }
+  </article>
+</section>

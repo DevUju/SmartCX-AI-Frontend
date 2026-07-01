@@ -1,0 +1,53 @@
+.badge-wrap {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.chip {
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+}
+
+.p-low {
+  background: #dbeafe;
+  color: #1e3a8a;
+}
+
+.p-medium {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.p-high {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.p-urgent {
+  background: #111;
+  color: #fff;
+}
+
+.s-open {
+  background: #111;
+  color: #fff;
+}
+
+.s-pending {
+  border: 1px solid #111;
+  color: #111;
+}
+
+.s-escalated {
+  background: #4338ca;
+  color: #fff;
+}
+
+.s-resolved {
+  background: #d1fae5;
+  color: #065f46;
+}

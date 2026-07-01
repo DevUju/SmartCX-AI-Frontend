@@ -1,0 +1,155 @@
+<section class="settings-page">
+  <header>
+    <h1>Settings</h1>
+    <p>Manage business profile and connected channels.</p>
+  </header>
+
+  @if (loading()) {
+    <article class="panel">Loading settings...</article>
+  } @else {
+    <div class="settings-stack">
+      <article class="panel">
+        <h2>Business Profile</h2>
+        <form [formGroup]="profileForm" class="modern-form" novalidate>
+          <div class="field">
+            <label for="businessName">Business Name</label>
+            <input id="businessName" type="text" formControlName="businessName" />
+          </div>
+          <div class="field">
+            <label for="ownerEmail">Owner Email</label>
+            <input id="ownerEmail" type="email" formControlName="ownerEmail" />
+          </div>
+          <div class="field">
+            <label for="location">Location</label>
+            <input id="location" type="text" formControlName="location" />
+          </div>
+          <p class="hint">Business profile updates will be enabled in the next backend phase.</p>
+        </form>
+      </article>
+
+      <article class="panel">
+        <h2>Connected Channels</h2>
+        <p class="section-subtitle">Connect or update your channel credentials securely.</p>
+        <ul class="channel-list">
+          @for (channel of channels(); track channel.type) {
+            <li>
+              <div>
+                <strong>{{ channel.type.toUpperCase() }}</strong>
+                <small>
+                  {{ channel.isConnected ? 'Connected' : 'Not connected' }}
+                  @if (channel.connectedAt) {
+                    • {{ channel.connectedAt | date: 'MMM d, y, h:mm a' }}
+                  }
+                </small>
+              </div>
+              <button
+                type="button"
+                class="link-btn"
+                (click)="openChannelModal(channel.type)"
+              >
+                {{ channel.isConnected ? 'MANAGE' : 'CONNECT' }}
+              </button>
+              @if (channel.isConnected) {
+                <button
+                  type="button"
+                  class="reset-btn"
+                  [disabled]="disconnectingType() === channel.type"
+                  (click)="resetConnection(channel.type)"
+                >
+                  {{ disconnectingType() === channel.type ? 'RESETTING...' : 'RESET' }}
+                </button>
+              }
+            </li>
+          }
+        </ul>
+      </article>
+    </div>
+  }
+
+  @if (isModalOpen()) {
+    <div class="modal-backdrop" (click)="closeChannelModal()"></div>
+    <section class="modal" role="dialog" aria-modal="true" aria-label="Connect channel">
+      <header class="modal-header">
+        <h3>Connect {{ selectedChannel().toUpperCase() }}</h3>
+        <button type="button" class="close-btn" (click)="closeChannelModal()">✕</button>
+      </header>
+
+      @if (selectedChannel() === 'whatsapp') {
+        <form [formGroup]="whatsappForm" class="modal-form" novalidate>
+          <div class="field">
+            <label for="waPhoneId">Phone Number ID</label>
+            <input id="waPhoneId" type="text" formControlName="phoneNumberId" />
+          </div>
+          <div class="field">
+            <label for="waAccessToken">Access Token</label>
+            <input id="waAccessToken" type="password" formControlName="accessToken" />
+          </div>
+          <div class="field">
+            <label for="waVerifyToken">Webhook Verify Token</label>
+            <input id="waVerifyToken" type="text" formControlName="webhookVerifyToken" />
+          </div>
+        </form>
+      }
+
+      @if (selectedChannel() === 'instagram') {
+        <form [formGroup]="instagramForm" class="modal-form" novalidate>
+          <div class="field">
+            <label for="igAppId">App ID</label>
+            <input id="igAppId" type="text" formControlName="appId" />
+          </div>
+          <div class="field">
+            <label for="igAppSecret">App Secret</label>
+            <input id="igAppSecret" type="password" formControlName="appSecret" />
+          </div>
+          <div class="field">
+            <label for="igPageToken">Page Access Token</label>
+            <input id="igPageToken" type="password" formControlName="pageAccessToken" />
+          </div>
+        </form>
+      }
+
+      @if (selectedChannel() === 'email') {
+        <form [formGroup]="emailForm" class="modal-form" novalidate>
+          <div class="field">
+            <label for="smtpHost">SMTP Host</label>
+            <input id="smtpHost" type="text" formControlName="smtpHost" />
+          </div>
+          <div class="modal-grid">
+            <div class="field">
+              <label for="smtpPort">SMTP Port</label>
+              <input id="smtpPort" type="text" formControlName="smtpPort" />
+            </div>
+            <div class="field">
+              <label for="senderEmail">Sender Email</label>
+              <input id="senderEmail" type="email" formControlName="senderEmail" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="smtpUser">SMTP Username</label>
+            <input id="smtpUser" type="email" formControlName="smtpUser" />
+          </div>
+          <div class="field">
+            <label for="smtpPassword">SMTP Password</label>
+            <input id="smtpPassword" type="password" formControlName="smtpPassword" />
+          </div>
+        </form>
+      }
+
+      <footer class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeChannelModal()">Cancel</button>
+        <button
+          type="button"
+          class="btn-primary"
+          [disabled]="connecting() || isSelectedChannelFormInvalid()"
+          (click)="connectSelectedChannel()"
+        >
+          {{ connecting() ? 'CONNECTING...' : 'CONNECT CHANNEL' }}
+        </button>
+      </footer>
+    </section>
+  }
+
+  @if (errorMessage()) {
+    <p class="error-text">{{ errorMessage() }}</p>
+  }
+</section>

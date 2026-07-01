@@ -1,0 +1,31 @@
+.bubble {
+  max-width: 75%;
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  padding: 0.62rem 0.72rem;
+  background: #fff;
+}
+
+.bubble.self {
+  margin-left: auto;
+  background: #111;
+  color: #fff;
+}
+
+.bubble.internal {
+  margin-left: auto;
+  margin-right: auto;
+  background: transparent;
+  border-style: dashed;
+}
+
+.bubble p {
+  margin: 0;
+  line-height: 1.35;
+}
+
+.bubble small {
+  display: block;
+  margin-top: 0.35rem;
+  opacity: 0.72;
+}

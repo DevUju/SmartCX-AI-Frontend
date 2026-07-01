@@ -1,0 +1,8 @@
+<div class="badge-wrap">
+  @if (priority()) {
+    <span class="chip priority" [class]="'chip priority p-' + priority()">{{ priority() }}</span>
+  }
+  @if (status()) {
+    <span class="chip status" [class]="'chip status s-' + status()">{{ status() }}</span>
+  }
+</div>

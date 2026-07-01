@@ -1,0 +1,4 @@
+<article class="bubble" [class.self]="sender() !== 'customer'" [class.internal]="isInternalNote()">
+  <p>{{ content() }}</p>
+  <small>{{ time() }}</small>
+</article>

@@ -11,17 +11,13 @@
   <article class="summary-card">
     <span class="chip">CASE_FINAL_VERIFIED</span>
 
-    @if (errorMessage()) {
-      <p>{{ errorMessage() }}</p>
-    }
+    <p *ngIf="errorMessage()">{{ errorMessage() }}</p>
 
     <div class="grid">
       <section class="timeline">
         <h2>Ticket Timeline</h2>
         <ul>
-          @for (item of timeline; track item) {
-            <li>{{ item }}</li>
-          }
+          <li *ngFor="let item of timeline">{{ item }}</li>
         </ul>
       </section>
 
@@ -36,6 +32,9 @@
         <h3>The Action</h3>
         <form [formGroup]="form" novalidate>
           <textarea rows="5" formControlName="resolutionSummary"></textarea>
+          <small class="error-text" *ngIf="form.controls.resolutionSummary.touched && form.controls.resolutionSummary.invalid">
+            Resolution summary must be at least 10 characters.
+          </small>
         </form>
 
         <div class="map-placeholder">Dispatch Location Map</div>
@@ -48,7 +47,7 @@
   </article>
 
   <footer class="actions">
-    <button type="button" class="btn-primary" [disabled]="saving()" (click)="markResolved()">
+    <button type="button" class="btn-primary" [disabled]="saving() || form.invalid" (click)="markResolved()">
       {{ saving() ? 'PROCESSING...' : 'MARK RESOLVED' }}
     </button>
     <button type="button" class="btn-lite" (click)="reopen()">REOPEN TICKET</button>
