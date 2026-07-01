@@ -19,6 +19,9 @@ export class ResolutionSummaryComponent implements OnInit {
   protected readonly saving = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
 
+  protected readonly resolutionProblem = signal('');
+  protected readonly resolutionAction = signal('');
+
   protected readonly timeline = [
     'Created',
     'AI Analyzed',
@@ -28,7 +31,7 @@ export class ResolutionSummaryComponent implements OnInit {
   ];
 
   protected readonly form = this.fb.nonNullable.group({
-    resolutionSummary: ['', [Validators.required, Validators.minLength(10)]],
+    resolutionSummary: [''],
     sentimentShiftStart: ['frustrated', [Validators.required]],
     sentimentShiftEnd: ['happy', [Validators.required]],
   });
@@ -60,6 +63,10 @@ export class ResolutionSummaryComponent implements OnInit {
       .subscribe({
         next: (ticket) => {
           this.ticket.set(ticket);
+          this.form.patchValue({
+            resolutionSummary: ticket.resolutionSummary ?? '',
+            sentimentShiftEnd: ticket.sentimentShiftEnd ?? 'happy',
+          });
           this.toastService.success('Ticket resolved successfully.');
           void this.router.navigate(['/tickets', ticket.id]);
         },
@@ -105,11 +112,17 @@ export class ResolutionSummaryComponent implements OnInit {
       .subscribe({
         next: (ticket) => {
           this.ticket.set(ticket);
+
+          const parts = (ticket.resolutionSummary ?? '').split('\n\n');
+          this.resolutionProblem.set(
+            parts[0] ?? 'No problem summary recorded.',
+          );
+          this.resolutionAction.set(parts[1] ?? '');
+
           this.form.patchValue({
-            resolutionSummary:
-              ticket.resolutionSummary ??
-              ticket.aiInsightSummary ??
-              'Ticket resolved after agent response and successful follow-up.',
+            resolutionSummary: parts[1] ?? ticket.aiInsightSummary ?? '',
+            sentimentShiftStart: ticket.sentimentShiftStart ?? 'frustrated',
+            sentimentShiftEnd: ticket.sentimentShiftEnd ?? 'happy',
           });
         },
         error: (error: Error) => {

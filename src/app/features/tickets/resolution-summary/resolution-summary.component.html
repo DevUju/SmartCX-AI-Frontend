@@ -12,7 +12,7 @@
     <span class="chip">CASE_FINAL_VERIFIED</span>
 
     @if (errorMessage()) {
-      <p>{{ errorMessage() }}</p>
+    <p>{{ errorMessage() }}</p>
     }
 
     <div class="grid">
@@ -20,22 +20,22 @@
         <h2>Ticket Timeline</h2>
         <ul>
           @for (item of timeline; track item) {
-            <li>{{ item }}</li>
+          <li>{{ item }}</li>
           }
         </ul>
       </section>
 
       <section class="resolution">
         <h2>Resolution Summary</h2>
+
         <h3>The Problem</h3>
-        <p>
-          Customer experienced delivery delay beyond expected SLA and lacked reliable
-          status visibility.
-        </p>
+        <p>{{ resolutionProblem() }}</p>
 
         <h3>The Action</h3>
         <form [formGroup]="form" novalidate>
-          <textarea rows="5" formControlName="resolutionSummary"></textarea>
+          <textarea rows="5" formControlName="resolutionSummary" readonly
+            placeholder="AI will generate this when you mark the ticket resolved.">
+        </textarea>
         </form>
 
         <div class="map-placeholder">Dispatch Location Map</div>

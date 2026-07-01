@@ -59,6 +59,37 @@
   display: flex;
 }
 
+.suggested-replies {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #eee8dc;
+}
+
+.suggestion-chip {
+  text-align: left;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid #d8d4ca;
+  border-radius: 0.6rem;
+  background: #fff;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.suggestion-chip:hover {
+  background: #f5f2ea;
+  border-color: #b8b0a0;
+}
+
+.suggestion-chip:active {
+  background: #eee8dc;
+}
+
 .bubble-row.right {
   justify-content: end;
 }

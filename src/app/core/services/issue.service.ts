@@ -58,7 +58,9 @@ export class IssueService {
 
     return this.http
       .get<IssueListResponse>(`${API_BASE_URL}/issues`, { params })
-      .pipe(this.errorService.handleHttpError<IssueListResponse>('List issues'));
+      .pipe(
+        this.errorService.handleHttpError<IssueListResponse>('List issues'),
+      );
   }
 
   getIssue(issueId: string): Observable<Issue> {
@@ -67,9 +69,47 @@ export class IssueService {
       .pipe(this.errorService.handleHttpError<Issue>('Get issue'));
   }
 
+  getQueueInsight(): Observable<{ summary: string }> {
+    return this.http
+      .get<{ summary: string }>(`${API_BASE_URL}/issues/insights/queue`)
+      .pipe(
+        this.errorService.handleHttpError<{ summary: string }>(
+          'Get queue insight',
+        ),
+      );
+  }
+
+  getSmartReplies(issueId: string): Observable<{ replies: string[] }> {
+    return this.http
+      .get<{
+        replies: string[];
+      }>(`${API_BASE_URL}/issues/${issueId}/smart-replies`)
+      .pipe(
+        this.errorService.handleHttpError<{ replies: string[] }>(
+          'Get smart replies',
+        ),
+      );
+  }
+
+  getTicketDraft(issueId: string): Observable<{ draft: string }> {
+    return this.http
+      .get<{ draft: string }>(`${API_BASE_URL}/issues/${issueId}/ticket-draft`)
+      .pipe(
+        this.errorService.handleHttpError<{ draft: string }>(
+          'Get ticket draft',
+        ),
+      );
+  }
+
   updateIssue(issueId: string, payload: UpdateIssueRequest): Observable<Issue> {
     return this.http
       .patch<Issue>(`${API_BASE_URL}/issues/${issueId}`, payload)
       .pipe(this.errorService.handleHttpError<Issue>('Update issue'));
+  }
+
+  addMessage(issueId: string, content: string): Observable<Issue> {
+    return this.http
+      .post<Issue>(`${API_BASE_URL}/issues/${issueId}/messages`, { content })
+      .pipe(this.errorService.handleHttpError<Issue>('Send message'));
   }
 }

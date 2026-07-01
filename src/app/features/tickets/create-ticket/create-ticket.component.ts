@@ -18,10 +18,13 @@ import { ToastService } from '../../../core/services/toast.service';
 export class CreateTicketComponent implements OnInit {
   protected readonly priorities = ['Low', 'Medium', 'High', 'Urgent'];
   protected readonly issues = signal<Issue[]>([]);
-  protected readonly customerNamesByIssueId = signal<Record<string, string>>({});
+  protected readonly customerNamesByIssueId = signal<Record<string, string>>(
+    {},
+  );
   protected readonly loading = signal(true);
   protected readonly isSubmitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly generatingDraft = signal(false);
 
   get canSubmit(): boolean {
     return this.form.valid && !this.isSubmitting();
@@ -33,10 +36,7 @@ export class CreateTicketComponent implements OnInit {
     title: ['', [Validators.required]],
     category: ['', [Validators.required]],
     priority: ['High', [Validators.required]],
-    draft: [
-      '',
-      [Validators.required, Validators.minLength(10)],
-    ],
+    draft: ['', [Validators.required, Validators.minLength(10)]],
   });
 
   constructor(
@@ -48,6 +48,22 @@ export class CreateTicketComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly customerService: CustomerService,
   ) {}
+
+  protected regenerateDraft(): void {
+    const issueId = this.form.controls.issueId.value;
+    if (!issueId) {
+      return;
+    }
+
+    this.generatingDraft.set(true);
+    this.issueService
+      .getTicketDraft(issueId)
+      .pipe(finalize(() => this.generatingDraft.set(false)))
+      .subscribe({
+        next: (response) => this.form.patchValue({ draft: response.draft }),
+        error: () => this.toastService.error('Could not generate AI draft.'),
+      });
+  }
 
   ngOnInit(): void {
     this.loadIssues();
@@ -107,7 +123,8 @@ export class CreateTicketComponent implements OnInit {
     this.loading.set(true);
     this.errorMessage.set(null);
     const preselectedIssueId = this.route.snapshot.queryParamMap.get('issueId');
-    const preselectedCustomerId = this.route.snapshot.queryParamMap.get('customerId');
+    const preselectedCustomerId =
+      this.route.snapshot.queryParamMap.get('customerId');
 
     this.issueService
       .listIssues({ status: 'new', page: 1, limit: 100 })
@@ -120,7 +137,8 @@ export class CreateTicketComponent implements OnInit {
             next: (customerMap) => {
               const byIssue: Record<string, string> = {};
               response.items.forEach((issue) => {
-                byIssue[issue.id] = customerMap.get(issue.customerId)?.name ?? issue.customerId;
+                byIssue[issue.id] =
+                  customerMap.get(issue.customerId)?.name ?? issue.customerId;
               });
               this.customerNamesByIssueId.set(byIssue);
             },
@@ -130,7 +148,9 @@ export class CreateTicketComponent implements OnInit {
           });
 
           const fallbackIssue = response.items[0];
-          const selectedIssue = response.items.find((issue) => issue.id === preselectedIssueId);
+          const selectedIssue = response.items.find(
+            (issue) => issue.id === preselectedIssueId,
+          );
           const activeIssue = selectedIssue ?? fallbackIssue;
 
           if (!activeIssue) {

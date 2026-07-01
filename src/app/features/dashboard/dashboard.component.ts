@@ -3,7 +3,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { DashboardService } from '../../core/services/dashboard.service';
 import { TicketService } from '../../core/services/ticket.service';
-
+import { RouterModule } from '@angular/router';
 type Metric = {
   label: string;
   value: string;
@@ -29,13 +29,14 @@ type AgentAvailability = {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent implements OnInit {
   protected readonly loading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly aiInsight = signal('Loading insight...');
 
   protected readonly metrics = signal<Metric[]>([
     { label: 'Open Tickets', value: '0' },
@@ -59,6 +60,10 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.dashboardService.getAiInsight().subscribe({
+      next: (response) => this.aiInsight.set(response.summary),
+      error: () => this.aiInsight.set('Insight unavailable right now.'),
+    });
     this.loadDashboard();
   }
 
@@ -91,7 +96,9 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.getTrends().subscribe({
       next: (trends) => {
         const max = Math.max(
-          ...trends.points.map((point) => Math.max(point.ticketsOpened, point.ticketsResolved)),
+          ...trends.points.map((point) =>
+            Math.max(point.ticketsOpened, point.ticketsResolved),
+          ),
           1,
         );
         this.trends.set(
