@@ -32,20 +32,12 @@ type QueueItem = {
   styleUrl: './issue-queue.component.css',
 })
 export class IssueQueueComponent implements OnInit, OnDestroy {
-  protected readonly statuses: Array<'all' | 'new' | 'pending' | 'converted' | 'closed'> = [
-    'all',
-    'new',
-    'pending',
-    'converted',
-    'closed',
-  ];
-  protected readonly priorities: Array<'all' | 'low' | 'medium' | 'high' | 'urgent'> = [
-    'all',
-    'low',
-    'medium',
-    'high',
-    'urgent',
-  ];
+  protected readonly statuses: Array<
+    'all' | 'new' | 'pending' | 'converted' | 'closed'
+  > = ['all', 'new', 'pending', 'converted', 'closed'];
+  protected readonly priorities: Array<
+    'all' | 'low' | 'medium' | 'high' | 'urgent'
+  > = ['all', 'low', 'medium', 'high', 'urgent'];
 
   protected readonly issues = signal<QueueItem[]>([]);
   protected readonly loading = signal(true);
@@ -53,9 +45,14 @@ export class IssueQueueComponent implements OnInit, OnDestroy {
   protected readonly total = signal(0);
   protected readonly page = signal(1);
   protected readonly limit = signal(20);
+  protected readonly aiInsight = signal('Loading insight...');
 
-  protected readonly selectedStatus = signal<'all' | 'new' | 'pending' | 'converted' | 'closed'>('all');
-  protected readonly selectedPriority = signal<'all' | 'low' | 'medium' | 'high' | 'urgent'>('all');
+  protected readonly selectedStatus = signal<
+    'all' | 'new' | 'pending' | 'converted' | 'closed'
+  >('all');
+  protected readonly selectedPriority = signal<
+    'all' | 'low' | 'medium' | 'high' | 'urgent'
+  >('all');
   protected readonly searchTerm = signal('');
   private readonly destroy$ = new Subject<void>();
   private readonly searchInput$ = new Subject<string>();
@@ -64,8 +61,14 @@ export class IssueQueueComponent implements OnInit, OnDestroy {
     const entries = this.issues();
     return [
       { label: 'ALL ISSUES', count: this.total() },
-      { label: 'UNASSIGNED', count: entries.filter((issue) => issue.status === 'NEW').length },
-      { label: 'URGENT', count: entries.filter((issue) => issue.priority === 'URGENT').length },
+      {
+        label: 'UNASSIGNED',
+        count: entries.filter((issue) => issue.status === 'NEW').length,
+      },
+      {
+        label: 'URGENT',
+        count: entries.filter((issue) => issue.priority === 'URGENT').length,
+      },
     ];
   });
 
@@ -94,6 +97,10 @@ export class IssueQueueComponent implements OnInit, OnDestroy {
       });
 
     this.loadIssues();
+    this.issueService.getQueueInsight().subscribe({
+      next: (response) => this.aiInsight.set(response.summary),
+      error: () => this.aiInsight.set('Insight unavailable right now.'),
+    });
   }
 
   ngOnDestroy(): void {
@@ -170,9 +177,13 @@ export class IssueQueueComponent implements OnInit, OnDestroy {
               this.issues.update((items) =>
                 items.map((item) => ({
                   ...item,
-                  customer: customerMap.get(item.customer)?.name ?? item.customer,
-                  customerChannel: (customerMap.get(item.customer)?.channel ?? item.customerChannel) as QueueItem['customerChannel'],
-                  customerStatus: customerMap.get(item.customer)?.status ?? item.customerStatus,
+                  customer:
+                    customerMap.get(item.customer)?.name ?? item.customer,
+                  customerChannel: (customerMap.get(item.customer)?.channel ??
+                    item.customerChannel) as QueueItem['customerChannel'],
+                  customerStatus:
+                    customerMap.get(item.customer)?.status ??
+                    item.customerStatus,
                 })),
               );
             },

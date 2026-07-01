@@ -90,6 +90,33 @@
   padding: 0.42rem 0.6rem;
 }
 
+.segmented button.active {
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #1a1a1a;
+}
+
+.resolved-badge {
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  background: #e6f4ea;
+  color: #2d7a3a;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.resolved-notice {
+  padding: 0.75rem 1rem;
+  background: #f5f2ea;
+  border-radius: 0.6rem;
+  color: #6b6355;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 0.75rem;
+}
+
 .composer {
   margin-top: 0.6rem;
   display: grid;
@@ -132,7 +159,8 @@
   .workspace-layout {
     grid-template-columns: 1fr;
   }
-}.workspace-layout {
+}
+.workspace-layout {
   display: grid;
   grid-template-columns: 0.9fr 1.2fr 0.9fr;
   gap: 0.8rem;

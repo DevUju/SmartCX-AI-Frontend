@@ -11,30 +11,31 @@
   <article class="summary-card">
     <span class="chip">CASE_FINAL_VERIFIED</span>
 
-    <p *ngIf="errorMessage()">{{ errorMessage() }}</p>
+    @if (errorMessage()) {
+    <p>{{ errorMessage() }}</p>
+    }
 
     <div class="grid">
       <section class="timeline">
         <h2>Ticket Timeline</h2>
         <ul>
-          <li *ngFor="let item of timeline">{{ item }}</li>
+          @for (item of timeline; track item) {
+          <li>{{ item }}</li>
+          }
         </ul>
       </section>
 
       <section class="resolution">
         <h2>Resolution Summary</h2>
+
         <h3>The Problem</h3>
-        <p>
-          Customer experienced delivery delay beyond expected SLA and lacked reliable
-          status visibility.
-        </p>
+        <p>{{ resolutionProblem() }}</p>
 
         <h3>The Action</h3>
         <form [formGroup]="form" novalidate>
-          <textarea rows="5" formControlName="resolutionSummary"></textarea>
-          <small class="error-text" *ngIf="form.controls.resolutionSummary.touched && form.controls.resolutionSummary.invalid">
-            Resolution summary must be at least 10 characters.
-          </small>
+          <textarea rows="5" formControlName="resolutionSummary" readonly
+            placeholder="AI will generate this when you mark the ticket resolved.">
+        </textarea>
         </form>
 
         <div class="map-placeholder">Dispatch Location Map</div>

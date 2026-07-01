@@ -30,14 +30,32 @@ export class DashboardService {
   ) {}
 
   getMetrics(): Observable<DashboardMetrics> {
-    return this.http.get<DashboardMetrics>(`${API_BASE_URL}/dashboard/metrics`).pipe(
-      this.errorService.handleHttpError<DashboardMetrics>('Fetch dashboard metrics'),
-    );
+    return this.http
+      .get<DashboardMetrics>(`${API_BASE_URL}/dashboard/metrics`)
+      .pipe(
+        this.errorService.handleHttpError<DashboardMetrics>(
+          'Fetch dashboard metrics',
+        ),
+      );
   }
 
   getTrends(): Observable<DashboardTrends> {
-    return this.http.get<DashboardTrends>(`${API_BASE_URL}/dashboard/trends`).pipe(
-      this.errorService.handleHttpError<DashboardTrends>('Fetch dashboard trends'),
-    );
+    return this.http
+      .get<DashboardTrends>(`${API_BASE_URL}/dashboard/trends`)
+      .pipe(
+        this.errorService.handleHttpError<DashboardTrends>(
+          'Fetch dashboard trends',
+        ),
+      );
+  }
+
+  getAiInsight(): Observable<{ summary: string }> {
+    return this.http
+      .get<{ summary: string }>(`${API_BASE_URL}/dashboard/ai-insight`)
+      .pipe(
+        this.errorService.handleHttpError<{ summary: string }>(
+          'Get AI insight',
+        ),
+      );
   }
 }

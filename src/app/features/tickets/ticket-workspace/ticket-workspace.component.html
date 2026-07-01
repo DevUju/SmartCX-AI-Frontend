@@ -2,11 +2,7 @@
   <aside class="left-col">
     <article class="card">
       <h2>Customer Profile</h2>
-      <app-customer-badge
-        [name]="customerName()"
-        [channel]="customerChannel()"
-        [status]="customerStatus()"
-      />
+      <app-customer-badge [name]="customerName()" [channel]="customerChannel()" [status]="customerStatus()" />
       <p>{{ customerEmail() }}</p>
       <p>{{ customerPhone() }}</p>
       <p>Location: {{ customerLocation() }}</p>
@@ -23,52 +19,70 @@
 
   <main class="center-col">
     @if (errorMessage()) {
-      <article class="ai-card">
-        <p>{{ errorMessage() }}</p>
-        <button type="button" class="btn-primary" (click)="retry()">Retry</button>
-      </article>
+    <article class="ai-card">
+      <p>{{ errorMessage() }}</p>
+      <button type="button" class="btn-primary" (click)="retry()">Retry</button>
+    </article>
     }
 
     <article class="ai-card">
+      @if (ticket()?.status === 'resolved') {
+      <h2>Resolution Summary</h2>
+      <p>{{ ticket()?.resolutionSummary || 'No resolution summary recorded.' }}</p>
+      } @else {
       <h2>AI Insight Summary</h2>
       <p>{{ ticket()?.aiInsightSummary || 'No AI insight available for this ticket.' }}</p>
+      }
     </article>
 
     <article class="chat-card">
       @for (message of messages(); track message.text) {
-        <div class="msg" [class.customer]="message.sender === 'customer'" [class.agent]="message.sender === 'agent'" [class.note]="message.sender === 'note'">
-          {{ message.text }}
-        </div>
+      <div class="msg" [class.customer]="message.sender === 'customer'" [class.agent]="message.sender === 'agent'"
+        [class.note]="message.sender === 'note'">
+        {{ message.text }}
+      </div>
       }
 
+      @if (ticket()?.status !== 'resolved') {
       <div class="reply-tabs">
         <button type="button">Reply</button>
         <button type="button">Internal Note</button>
       </div>
 
       <div class="composer">
-        <input
-          type="text"
-          placeholder="Type message..."
-          [ngModel]="draftMessage()"
-          (ngModelChange)="draftMessage.set($event)"
-        />
+        <input type="text" placeholder="Type message..." [ngModel]="draftMessage()"
+          (ngModelChange)="draftMessage.set($event)" />
         <button type="button" class="btn-primary" [disabled]="saving()" (click)="sendMessage()">
           {{ saving() ? 'SENDING...' : 'SEND MESSAGE' }}
         </button>
       </div>
+      } @else {
+      <div class="resolved-notice">
+        This ticket has been resolved. No further messages can be sent.
+      </div>
+      }
     </article>
   </main>
-
   <aside class="right-col">
     <article class="card">
       <h2>Ticket Metadata</h2>
       <label>Status</label>
       <div class="segmented">
-        <button type="button" (click)="setStatus('open')">Open</button>
-        <button type="button" (click)="setStatus('pending')">Pending</button>
-        <button type="button" (click)="setStatus('escalated')">Escalated</button>
+        <button type="button" [class.active]="ticket()?.status === 'open'" (click)="setStatus('open')">Open</button>
+        <button type="button" [class.active]="ticket()?.status === 'pending'"
+          (click)="setStatus('pending')">Pending</button>
+        <button type="button" [class.active]="ticket()?.status === 'escalated'"
+          (click)="setStatus('escalated')">Escalated</button>
       </div>
+      @if (ticket()?.status === 'resolved') {
+      <div class="resolved-badge">✓ RESOLVED</div>
+      } @else {
+      <a class="resolve-btn" [routerLink]="['/tickets', ticket()?.id, 'resolution']">
+        RESOLVE TICKET
+      </a>
+      }
+
+
       <label>Priority</label>
       <select>
         <option>{{ ticket()?.priority || 'High' }}</option>
@@ -84,12 +98,12 @@
     </article>
 
     <article class="card">
-      <h2>Quick Actions</h2>
-      <button type="button" class="btn-lite">Set Reminder</button>
-      <button type="button" class="btn-lite">Transfer Ticket</button>
-      <button type="button" class="btn-lite">Full History</button>
+      <h2>Order Summary</h2>
+      <p>Issue ID: {{ ticket()?.issueId || '--' }}</p>
+      <p>Total Spent: ₦{{ customerTotalSpent() ?? '--' }}</p>
+      <button type="button" class="btn-lite" disabled title="Coming soon">View Logistics</button>
     </article>
 
-    <a class="resolve-btn" [routerLink]="['/tickets', ticket()?.id, 'resolution']">RESOLVE TICKET</a>
+
   </aside>
 </section>
