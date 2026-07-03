@@ -22,6 +22,10 @@ export class ResolutionSummaryComponent implements OnInit {
   protected readonly resolutionProblem = signal('');
   protected readonly resolutionAction = signal('');
 
+  protected readonly resolutionContext = signal('');
+  protected readonly resolutionImpact = signal('');
+  protected readonly resolutionNextAction = signal('');
+
   protected readonly timeline = [
     'Created',
     'AI Analyzed',
@@ -56,7 +60,9 @@ export class ResolutionSummaryComponent implements OnInit {
     }
 
     if (!this.form.valid) {
-      this.errorMessage.set('Please provide a valid resolution summary with at least 10 characters.');
+      this.errorMessage.set(
+        'Please provide a valid resolution summary with at least 10 characters.',
+      );
       return;
     }
 
@@ -118,14 +124,17 @@ export class ResolutionSummaryComponent implements OnInit {
         next: (ticket) => {
           this.ticket.set(ticket);
 
-          const parts = (ticket.resolutionSummary ?? '').split('\n\n');
-          this.resolutionProblem.set(
-            parts[0] ?? 'No problem summary recorded.',
-          );
-          this.resolutionAction.set(parts[1] ?? '');
+          const raw = ticket.resolutionSummary ?? '';
+          const parsed = this.parseResolutionSummary(raw);
+
+          this.resolutionProblem.set(parsed.problem);
+          this.resolutionAction.set(parsed.action);
+          this.resolutionContext.set(parsed.context);
+          this.resolutionImpact.set(parsed.impact);
+          this.resolutionNextAction.set(parsed.nextAction);
 
           this.form.patchValue({
-            resolutionSummary: parts[1] ?? ticket.aiInsightSummary ?? '',
+            resolutionSummary: raw,
             sentimentShiftStart: ticket.sentimentShiftStart ?? 'frustrated',
             sentimentShiftEnd: ticket.sentimentShiftEnd ?? 'happy',
           });
@@ -135,5 +144,48 @@ export class ResolutionSummaryComponent implements OnInit {
           this.toastService.error(error.message);
         },
       });
+  }
+
+  private parseResolutionSummary(raw: string): {
+    problem: string;
+    action: string;
+    context: string;
+    impact: string;
+    nextAction: string;
+  } {
+    if (!raw) {
+      return {
+        problem: '',
+        action: '',
+        context: '',
+        impact: '',
+        nextAction: '',
+      };
+    }
+
+    // Try single newline split first — this is what the AI actually returns
+    const lines = raw
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean);
+
+    if (lines.length >= 2) {
+      return {
+        problem: lines[0],
+        action: lines[1],
+        context: lines[2] ?? '',
+        impact: lines[3] ?? '',
+        nextAction: lines[4] ?? '',
+      };
+    }
+
+    // Fallback — whole text as problem
+    return {
+      problem: raw.trim(),
+      action: '',
+      context: '',
+      impact: '',
+      nextAction: '',
+    };
   }
 }

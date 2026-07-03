@@ -34,6 +34,7 @@ export class ConversationViewComponent implements OnInit {
 
   protected readonly smartReplies = signal<string[]>([]);
   protected readonly loadingReplies = signal(false);
+  protected readonly issueStatus = signal<string>('new');
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -84,6 +85,7 @@ export class ConversationViewComponent implements OnInit {
 
           this.customerId.set(issue.customerId);
           this.issuePriority.set(issue.priority);
+          this.issueStatus.set(issue.status);
           const parsedMessages = issue.rawMessages
             .map((entry) => {
               const text =

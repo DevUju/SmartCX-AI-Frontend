@@ -12,8 +12,6 @@
     <article class="card">
       <h2>Order Summary</h2>
       <p>Issue ID: {{ ticket()?.issueId || '--' }}</p>
-      <p>Total Spent: ₦{{ customerTotalSpent() ?? '--' }}</p>
-      <button type="button" class="btn-lite" disabled title="Coming soon">View Logistics</button>
     </article>
   </aside>
 
@@ -60,7 +58,13 @@
         </div>
       </div>
       } @else {
-      <p class="resolved-notice">This ticket has been resolved.</p>
+      <div class="resolved-notice">
+        <span>✓ This ticket was resolved</span>
+        @if (resolvedBy()) {
+        <span> by <strong>{{ resolvedBy() }}</strong></span>
+        }
+        <span>. No further replies can be sent.</span>
+      </div>
       }
     </article>
 
@@ -97,7 +101,12 @@
       </div>
 
       @if (ticket()?.status === 'resolved') {
-      <div class="resolved-badge">✓ RESOLVED</div>
+      <div class="resolved-badge">
+        ✓ RESOLVED
+        @if (resolvedBy()) {
+        <span class="resolved-by">by {{ resolvedBy() }}</span>
+        }
+      </div>
       } @else {
       <a class="resolve-btn" [routerLink]="['/tickets', ticket()?.id, 'resolution']">
         RESOLVE TICKET
@@ -123,10 +132,31 @@
       <p class="small-text">Current: {{ selectedAgentName() }}</p>
     </article>
 
+    @if (ticket()?.status === 'resolved') {
+    <article class="ai-card">
+      <h2 style="display: flex; align-items: center; gap: 0.5rem;">
+        <span style="font-size: 1.2rem;">✨</span> AI Resolution Summary
+      </h2>
+      @if (ticket()?.resolutionSummary) {
+      @for (line of resolutionLines(); track $index) {
+      <p style="margin: 0.4rem 0 0;">
+        <span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+                           letter-spacing: 0.06em; color: #888; display: block; margin-bottom: 0.15rem;">
+          {{ $index === 0 ? 'The Problem' : 'Action Taken' }}
+        </span>
+        {{ line }}
+      </p>
+      }
+      } @else {
+      <p>No resolution summary recorded.</p>
+      }
+    </article>
+    } @else {
     <article class="ai-card">
       <h2>✨ AI Insight</h2>
-      <p>{{ ticket()?.aiInsightSummary || 'No AI insight available.' }}</p>
+      <p>{{ aiInsightClean() }}</p>
     </article>
+    }
 
     <article class="card history-card">
       <div class="history-header">
