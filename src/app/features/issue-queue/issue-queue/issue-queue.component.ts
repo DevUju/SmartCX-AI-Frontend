@@ -231,7 +231,7 @@ export class IssueQueueComponent implements OnInit, OnDestroy {
       .listIssues({
         page: this.page(),
         limit: this.limit(),
-        status: statusFilter,
+        status: this.selectedStatus() === 'all' ? 'new' : statusFilter,
         priority: priorityFilter,
         search: this.searchTerm().trim() || undefined,
       })

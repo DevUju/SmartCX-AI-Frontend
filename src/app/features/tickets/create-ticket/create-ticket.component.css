@@ -311,6 +311,21 @@ header a {
   gap: 0.7rem;
 }
 
+.ticket-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 220px;
+  border: 1px solid #d8d3c9;
+  border-radius: 0.75rem;
+  padding: 0.85rem;
+  font: inherit;
+  font-size: 0.86rem;
+  line-height: 1.7;
+  resize: vertical;
+  background: #faf8f5;
+  color: #1a1a1a;
+}
+
 .toggle-row {
   display: flex;
   gap: 0.4rem;

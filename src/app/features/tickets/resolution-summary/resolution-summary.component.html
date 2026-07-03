@@ -12,7 +12,7 @@
     <span class="chip">CASE_FINAL_VERIFIED</span>
 
     @if (errorMessage()) {
-    <p>{{ errorMessage() }}</p>
+    <p class="error-msg">{{ errorMessage() }}</p>
     }
 
     <div class="grid">
@@ -26,22 +26,59 @@
       </section>
 
       <section class="resolution">
-        <h2>Resolution Summary</h2>
+        <div class="resolution-header">
+          <h2>✨ AI Resolution Summary</h2>
+          <span class="ai-badge">AI Generated</span>
+        </div>
 
-        <h3>The Problem</h3>
-        <p>{{ resolutionProblem() }}</p>
+        @if (!resolutionProblem() && !resolutionAction()) {
+        <p class="empty-summary">
+          AI summary will appear here after you mark the ticket resolved.
+        </p>
+        } @else {
+        @if (resolutionProblem()) {
+        <div class="section-block problem-block">
+          <span class="section-label">The Problem</span>
+          <p>{{ resolutionProblem() }}</p>
+        </div>
+        }
 
-        <h3>The Action</h3>
-        <form [formGroup]="form" novalidate>
-          <textarea rows="5" formControlName="resolutionSummary" readonly
-            placeholder="AI will generate this when you mark the ticket resolved.">
-        </textarea>
-        </form>
+        @if (resolutionContext()) {
+        <div class="section-block context-block">
+          <span class="section-label">Context</span>
+          <p>{{ resolutionContext() }}</p>
+        </div>
+        }
 
-        <div class="map-placeholder">Dispatch Location Map</div>
+        @if (resolutionAction()) {
+        <div class="section-block action-block">
+          <span class="section-label">Action Taken</span>
+          <p>{{ resolutionAction() }}</p>
+        </div>
+        }
+
+        @if (resolutionImpact()) {
+        <div class="section-block impact-block">
+          <span class="section-label">Impact</span>
+          <p>{{ resolutionImpact() }}</p>
+        </div>
+        }
+
+        @if (resolutionNextAction()) {
+        <div class="section-block next-block">
+          <span class="section-label">Next Action</span>
+          <p>{{ resolutionNextAction() }}</p>
+        </div>
+        }
+        }
+
         <div class="sentiment">
-          {{ form.controls.sentimentShiftStart.value | titlecase }} →
-          {{ form.controls.sentimentShiftEnd.value | titlecase }}
+          <span class="sentiment-label">Sentiment Shift</span>
+          <span class="sentiment-value">
+            {{ form.controls.sentimentShiftStart.value | titlecase }}
+            <span class="arrow">→</span>
+            {{ form.controls.sentimentShiftEnd.value | titlecase }}
+          </span>
         </div>
       </section>
     </div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { DashboardService } from '../../core/services/dashboard.service';
 import { TicketService } from '../../core/services/ticket.service';
@@ -93,6 +93,25 @@ export class DashboardComponent implements OnInit {
         },
       });
   }
+
+  // protected readonly aiInsightClean = computed(() => {
+  //   const raw = this.aiInsight();
+  //   return raw
+  //     .replace(/\*\*(.*?)\*\*/g, '$1')
+  //     .replace(/\*(.*?)\*/g, '$1')
+  //     .replace(/^\*\s+/gm, '• ')
+  //     .trim();
+  // });
+
+  protected readonly aiInsightLines = computed(() => {
+    const raw = this.aiInsight();
+    return raw
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .split(/\n+/)
+      .map((l) => l.trim())
+      .filter(Boolean);
+  });
 
   protected retry(): void {
     this.loadDashboard();

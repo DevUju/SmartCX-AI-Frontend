@@ -64,7 +64,7 @@ export class TicketWorkspaceComponent implements OnInit {
 
   protected readonly smartReplies = signal<string[]>([]);
   protected readonly loadingReplies = signal(false);
-
+  protected readonly resolvedBy = signal<string | null>(null);
   constructor(
     private readonly route: ActivatedRoute,
     private readonly ticketService: TicketService,
@@ -96,6 +96,32 @@ export class TicketWorkspaceComponent implements OnInit {
     this.loadTicket();
     this.loadAgents();
   }
+
+  protected readonly aiInsightClean = computed(() => {
+    const raw = this.ticket()?.aiInsightSummary ?? '';
+    return raw
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/^\*\s+/gm, '• ')
+      .trim();
+  });
+
+  protected readonly resolutionLines = computed(() => {
+    const raw = this.ticket()?.resolutionSummary ?? '';
+    return raw
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean);
+  });
+
+  protected readonly resolutionSummaryClean = computed(() => {
+    const raw = this.ticket()?.resolutionSummary ?? '';
+    return raw
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/^\*\s+/gm, '• ')
+      .trim();
+  });
 
   protected retry(): void {
     this.loadTicket();
@@ -163,12 +189,13 @@ export class TicketWorkspaceComponent implements OnInit {
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
         next: (message) => {
+          const isNote = this.activeTab() === 'note';
           this.messages.update((items) => [
             ...items,
-            { sender: 'agent', text: message.content },
+            { sender: isNote ? 'note' : 'agent', text: message.content },
           ]);
           this.draftMessage.set('');
-          this.toastService.success('Message sent.');
+          this.toastService.success(isNote ? 'Note added.' : 'Message sent.');
         },
         error: (error: Error) => {
           this.errorMessage.set(error.message);
@@ -211,6 +238,22 @@ export class TicketWorkspaceComponent implements OnInit {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (ticket) => {
+          this.ticket.set(ticket);
+
+          // Auto-load history if resolved to get resolver name
+          if (ticket.status === 'resolved') {
+            this.ticketService.getTicketHistory(ticket.id).subscribe({
+              next: (entries) => {
+                this.history.set(entries);
+                const resolvedEntry = entries.find(
+                  (e) => e.action === 'TICKET_RESOLVED',
+                );
+                if (resolvedEntry) this.resolvedBy.set(resolvedEntry.actorName);
+              },
+              error: () => {},
+            });
+          }
+
           this.customerService.getCustomerById(ticket.customerId).subscribe({
             next: (customer) => {
               console.log('Ticket received:', ticket);

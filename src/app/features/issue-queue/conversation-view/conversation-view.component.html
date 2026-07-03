@@ -88,10 +88,27 @@
           <dd>N --</dd>
         </div>
       </dl>
+      <!-- @if (issue()?.status === 'converted') {
+    <a class="btn-primary" [routerLink]="['/tickets', issue()?.ticketId]">
+      View Ticket →
+    </a>
+    } @else {
+    <a class="btn-primary" [routerLink]="['/tickets/create']"
+      [queryParams]="{ issueId: issue()?.id, customerId: issue()?.customerId }">
+      Create Ticket
+    </a>
+    } -->
+
+      @if (issueStatus() === 'converted') {
+      <a class="btn-primary" [routerLink]="['/tickets']">
+        View Tickets →
+      </a>
+      } @else {
       <a class="btn-primary" [routerLink]="['/tickets/create']"
         [queryParams]="{ issueId: issueId(), customerId: customerId() }">
-        Create ticket
+        Create Ticket
       </a>
+      }
       <button type="button" class="btn-lite">View order history</button>
     </section>
 
