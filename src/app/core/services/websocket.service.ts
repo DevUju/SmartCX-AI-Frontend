@@ -11,6 +11,14 @@ export type TicketUpdatedEvent = {
   updatedAt: string;
 };
 
+export type NotificationEvent = {
+  id: string;
+  message: string;
+  type: string;
+  link: string | null;
+  createdAt: string;
+};
+
 export type IssueNewEvent = {
   businessId: string;
   issueId: string;
@@ -31,15 +39,22 @@ export class WebsocketService {
   private socket: Socket | null = null;
   private activeBusinessId: string | null = null;
 
+  private readonly notificationSubject = new Subject<NotificationEvent>();
+  readonly notification$: Observable<NotificationEvent> =
+    this.notificationSubject.asObservable();
+
   private readonly ticketUpdatedSubject = new Subject<TicketUpdatedEvent>();
   private readonly issueNewSubject = new Subject<IssueNewEvent>();
   private readonly ticketAssignedSubject = new Subject<TicketAssignedEvent>();
 
-  readonly ticketUpdated$: Observable<TicketUpdatedEvent> = this.ticketUpdatedSubject.asObservable();
-  readonly issueNew$: Observable<IssueNewEvent> = this.issueNewSubject.asObservable();
-  readonly ticketAssigned$: Observable<TicketAssignedEvent> = this.ticketAssignedSubject.asObservable();
+  readonly ticketUpdated$: Observable<TicketUpdatedEvent> =
+    this.ticketUpdatedSubject.asObservable();
+  readonly issueNew$: Observable<IssueNewEvent> =
+    this.issueNewSubject.asObservable();
+  readonly ticketAssigned$: Observable<TicketAssignedEvent> =
+    this.ticketAssignedSubject.asObservable();
 
-  connect(businessId: string): void {
+  connect(businessId: string, userId: string): void {
     if (this.socket && this.activeBusinessId === businessId) {
       return;
     }
@@ -52,7 +67,9 @@ export class WebsocketService {
 
     this.socket.on('connect', () => {
       this.socket?.emit('business:join', { businessId });
+      this.socket?.emit('user:join', { userId }); // join personal room
     });
+
     this.socket.on('ticket:updated', (payload: TicketUpdatedEvent) => {
       this.ticketUpdatedSubject.next(payload);
     });
@@ -61,6 +78,9 @@ export class WebsocketService {
     });
     this.socket.on('ticket:assigned', (payload: TicketAssignedEvent) => {
       this.ticketAssignedSubject.next(payload);
+    });
+    this.socket.on('notification:new', (payload: NotificationEvent) => {
+      this.notificationSubject.next(payload);
     });
   }
 

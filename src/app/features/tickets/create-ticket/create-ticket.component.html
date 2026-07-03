@@ -13,16 +13,43 @@
   <div class="layout">
     <article class="history-card">
       <div class="title-row">
-        <h2>CONVERSATION HISTORY</h2>
-        <span>LIVE</span>
+        <h2>ISSUE CONTEXT</h2>
+        <span>AI TRIAGE</span>
       </div>
 
-      @if (issues().length === 0 && !loading()) {
-      <div class="chat-item agent">No new issues available to convert right now.</div>
-      }
-      @if (issues().length > 0) {
-      <div class="chat-item customer">Select an issue to prefill ticket details.</div>
-      <div class="chat-item agent">AI draft and category will populate automatically.</div>
+      @if (!selectedIssue()) {
+      <p class="history-instruction">
+        Select a source issue on the right to see its context here.
+      </p>
+      } @else {
+      <div class="context-block">
+        <p class="context-label">Customer Message</p>
+        <div class="chat-item customer">
+          <p>{{ selectedIssue()!.messagePreview }}</p>
+        </div>
+      </div>
+
+      <div class="context-block">
+        <p class="context-label"> ✨AI Analysis</p>
+        <div class="ai-summary-box">
+          <p>{{ selectedIssue()!.aiAnalysisSummary || 'No AI analysis available.' }}</p>
+        </div>
+      </div>
+
+      <div class="context-meta">
+        <span class="meta-chip">
+          📊 {{ selectedIssue()!.sentimentLabel | titlecase }}
+        </span>
+        <span class="meta-chip" [class.chip-low]="selectedIssue()!.priority === 'low'"
+          [class.chip-medium]="selectedIssue()!.priority === 'medium'"
+          [class.chip-high]="selectedIssue()!.priority === 'high'"
+          [class.chip-urgent]="selectedIssue()!.priority === 'urgent'">
+          {{ selectedIssue()!.priority | titlecase }} Priority
+        </span>
+        <span class="meta-chip">
+          📁 {{ selectedIssue()!.category }}
+        </span>
+      </div>
       }
     </article>
 
@@ -32,7 +59,8 @@
         <select formControlName="issueId" (change)="onIssueChange($any($event.target).value)">
           @for (issue of issues(); track issue.id) {
           <option [value]="issue.id">
-            {{ issue.id }} - {{ customerNamesByIssueId()[issue.id] || issue.customerId }} - {{ issue.category }}
+            {{ customerNamesByIssueId()[issue.id] || 'Loading...' }} — {{ issue.category }} — {{ issue.priority |
+            titlecase }}
           </option>
           }
         </select>
@@ -50,6 +78,7 @@
           <option>Refund</option>
           <option>Payment</option>
           <option>Product</option>
+          <option>Technical</option>
         </select>
       </div>
 
@@ -58,6 +87,8 @@
         <div class="toggle-row">
           @for (priority of priorities; track priority) {
           <button type="button" [class.active]="form.controls.priority.value === priority"
+            [class.prio-low]="priority === 'Low'" [class.prio-medium]="priority === 'Medium'"
+            [class.prio-high]="priority === 'High'" [class.prio-urgent]="priority === 'Urgent'"
             (click)="selectPriority(priority)">
             {{ priority }}
           </button>
@@ -66,8 +97,13 @@
       </div>
 
       <div class="field">
-        <label>AI-Generated Draft</label>
-        <textarea rows="4" formControlName="draft"></textarea>
+        <label>
+          ✨ AI-Generated Draft
+          @if (generatingDraft()) {
+          <span class="generating-badge">Generating...</span>
+          }
+        </label>
+        <textarea rows="5" formControlName="draft"></textarea>
       </div>
 
       <div class="actions">
@@ -76,11 +112,9 @@
           {{ isSubmitting() ? 'CREATING...' : 'Generate Ticket' }}
         </button>
         <button type="button" [disabled]="generatingDraft()" (click)="regenerateDraft()">
-          {{ generatingDraft() ? 'Generating...' : '✨ Generate AI Draft' }}
+          {{ generatingDraft() ? 'Generating...' : '✨ Regenerate Draft' }}
         </button>
       </div>
-
-      <p class="note">Creating this ticket will automatically notify the Logistics team...</p>
     </form>
   </div>
 </section>

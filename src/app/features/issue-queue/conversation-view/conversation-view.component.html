@@ -27,8 +27,25 @@
       }
     </div>
 
+    <div style="display: flex; gap: 0.4rem; padding: 0.8rem; border-bottom: 1px solid #ece5d9; background: #faf8f5;">
+      <span
+        style="font-size: 0.75rem; color: var(--ink-soft); font-weight: 600; text-transform: uppercase; align-self: center; margin-right: 0.5rem;">Priority:</span>
+      @for(p of ['low', 'medium', 'high', 'urgent']; track p) {
+      <span
+        style="border-radius: 999px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.2rem 0.55rem; transition: all 0.2s;"
+        [ngStyle]="{'background': p === 'low' ? '#dbeafe' : p === 'medium' ? '#fef3c7' : p === 'high' ? '#fee2e2' : '#111', 'color': p === 'low' ? '#1e3a8a' : p === 'medium' ? '#92400e' : p === 'high' ? '#991b1b' : '#fff', 'opacity': issuePriority() === p ? '1' : '0.3', 'filter': issuePriority() === p ? 'none' : 'grayscale(100%)'}">
+        {{ p }}
+      </span>
+      }
+    </div>
+
     @if (smartReplies().length > 0) {
     <div class="suggested-replies">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+        <small style="color: var(--ink-soft); font-weight: 600; text-transform: uppercase;">✨ Quick Replies</small>
+        <button type="button" (click)="smartReplies.set([])"
+          style="background: transparent; border: none; cursor: pointer; color: var(--ink-soft); font-weight: bold;">✕</button>
+      </div>
       @for (reply of smartReplies(); track reply) {
       <button type="button" class="suggestion-chip" (click)="useSuggestedReply(reply)">
         {{ reply }}

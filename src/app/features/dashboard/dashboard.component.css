@@ -4,6 +4,82 @@
   gap: 0.9rem;
 }
 
+.no-data {
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  padding: 1.5rem 0;
+  text-align: center;
+}
+
+.bar-count {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.2rem;
+  min-height: 1rem;
+}
+
+.bar-legend {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.6rem;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  margin-right: 0.25rem;
+}
+
+.legend-dot.opened {
+  background: #212121;
+}
+
+.member-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.dot-available {
+  background: #1a7a4a;
+}
+.dot-active {
+  background: #2563eb;
+}
+.dot-busy {
+  background: #b45309;
+}
+.dot-overloaded {
+  background: #c23737;
+}
+
+.member-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ticket-count {
+  font-size: 0.76rem;
+  color: var(--ink-soft);
+}
+
+.status-available {
+  color: #1a7a4a !important;
+}
+.status-busy {
+  color: #b45309 !important;
+}
+.status-overloaded {
+  color: #c23737 !important;
+}
 .metrics-grid {
   grid-column: 1 / -1;
   display: grid;

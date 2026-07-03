@@ -4,10 +4,16 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { CustomerService } from '../../../core/services/customer.service';
-import { Ticket, TicketStatus, TicketService } from '../../../core/services/ticket.service';
+import {
+  Ticket,
+  TicketStatus,
+  TicketService,
+  AuditLogEntry,
+} from '../../../core/services/ticket.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { TeamUser, UserService } from '../../../core/services/user.service';
 import { CustomerBadgeComponent } from '../../../shared/components/customer-badge/customer-badge.component';
+import { Priority } from '../../../core/services/ticket.service';
 
 type Message = {
   sender: 'customer' | 'agent' | 'note';
@@ -27,7 +33,9 @@ export class TicketWorkspaceComponent implements OnInit {
   protected readonly customerEmail = signal('customer@smartcx.local');
   protected readonly customerPhone = signal('+234 --- --- ----');
   protected readonly customerLocation = signal('N/A');
-  protected readonly customerChannel = signal<'whatsapp' | 'instagram' | 'email' | null>(null);
+  protected readonly customerChannel = signal<
+    'whatsapp' | 'instagram' | 'email' | null
+  >(null);
   protected readonly customerStatus = signal<string | null>(null);
   protected readonly customerTotalSpent = signal<number | null>(null);
   protected readonly messages = signal<Message[]>([]);
@@ -48,6 +56,15 @@ export class TicketWorkspaceComponent implements OnInit {
   protected readonly draftMessage = signal('');
   protected readonly saving = signal(false);
 
+  protected readonly activeTab = signal<'reply' | 'note'>('reply');
+
+  protected readonly showHistory = signal(false);
+  protected readonly history = signal<AuditLogEntry[]>([]);
+  protected readonly loadingHistory = signal(false);
+
+  protected readonly smartReplies = signal<string[]>([]);
+  protected readonly loadingReplies = signal(false);
+
   constructor(
     private readonly route: ActivatedRoute,
     private readonly ticketService: TicketService,
@@ -56,6 +73,25 @@ export class TicketWorkspaceComponent implements OnInit {
     private readonly userService: UserService,
   ) {}
 
+  protected loadSmartReplies(): void {
+    const activeTicket = this.ticket();
+    if (!activeTicket) return;
+
+    this.loadingReplies.set(true);
+    this.ticketService
+      .getSmartReplies(activeTicket.id)
+      .pipe(finalize(() => this.loadingReplies.set(false)))
+      .subscribe({
+        next: (response) => this.smartReplies.set(response.replies),
+        error: () => this.smartReplies.set([]),
+      });
+  }
+
+  protected useSuggestedReply(reply: string): void {
+    this.draftMessage.set(reply);
+    this.smartReplies.set([]);
+  }
+
   ngOnInit(): void {
     this.loadTicket();
     this.loadAgents();
@@ -63,6 +99,10 @@ export class TicketWorkspaceComponent implements OnInit {
 
   protected retry(): void {
     this.loadTicket();
+  }
+
+  protected setTab(tab: 'reply' | 'note'): void {
+    this.activeTab.set(tab);
   }
 
   protected assignAgent(agentId: string | null): void {
@@ -118,16 +158,39 @@ export class TicketWorkspaceComponent implements OnInit {
       .addTicketMessage(activeTicket.id, {
         content,
         senderType: 'agent',
+        isInternalNote: this.activeTab() === 'note',
       })
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
         next: (message) => {
-          this.messages.update((items) => [...items, { sender: 'agent', text: message.content }]);
+          this.messages.update((items) => [
+            ...items,
+            { sender: 'agent', text: message.content },
+          ]);
           this.draftMessage.set('');
           this.toastService.success('Message sent.');
         },
         error: (error: Error) => {
           this.errorMessage.set(error.message);
+          this.toastService.error(error.message);
+        },
+      });
+  }
+
+  protected setPriority(event: Event): void {
+    const activeTicket = this.ticket();
+    if (!activeTicket) return;
+
+    const priority = (event.target as HTMLSelectElement).value as Priority;
+
+    this.ticketService
+      .updateTicketPriority(activeTicket.id, priority)
+      .subscribe({
+        next: (ticket) => {
+          this.ticket.set(ticket);
+          this.toastService.success(`Priority set to ${priority}.`);
+        },
+        error: (error: Error) => {
           this.toastService.error(error.message);
         },
       });
@@ -150,8 +213,12 @@ export class TicketWorkspaceComponent implements OnInit {
         next: (ticket) => {
           this.customerService.getCustomerById(ticket.customerId).subscribe({
             next: (customer) => {
+              console.log('Ticket received:', ticket);
+              console.log('Messages in ticket:', ticket.messages);
               this.customerName.set(customer.name);
-              this.customerEmail.set(customer.email ?? 'customer@smartcx.local');
+              this.customerEmail.set(
+                customer.email ?? 'customer@smartcx.local',
+              );
               this.customerPhone.set(customer.phone ?? '+234 --- --- ----');
               this.customerLocation.set(customer.location ?? 'N/A');
               this.customerChannel.set(customer.channel ?? null);
@@ -193,5 +260,39 @@ export class TicketWorkspaceComponent implements OnInit {
         this.toastService.error(error.message);
       },
     });
+  }
+
+  protected toggleHistory(): void {
+    if (this.showHistory()) {
+      this.showHistory.set(false);
+      return;
+    }
+
+    const activeTicket = this.ticket();
+    if (!activeTicket) return;
+
+    this.loadingHistory.set(true);
+    this.showHistory.set(true);
+
+    this.ticketService
+      .getTicketHistory(activeTicket.id)
+      .pipe(finalize(() => this.loadingHistory.set(false)))
+      .subscribe({
+        next: (entries) => this.history.set(entries),
+        error: () => this.history.set([]),
+      });
+  }
+
+  protected formatAction(action: string): string {
+    const labels: Record<string, string> = {
+      TICKET_CREATED: 'Ticket created',
+      STATUS_CHANGED: 'Status changed',
+      AGENT_ASSIGNED: 'Agent assigned',
+      MESSAGE_SENT: 'Message sent',
+      NOTE_ADDED: 'Internal note added',
+      TICKET_RESOLVED: 'Ticket resolved',
+      PRIORITY_CHANGED: 'Priority changed',
+    };
+    return labels[action] ?? action;
   }
 }

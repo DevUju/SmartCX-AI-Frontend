@@ -25,6 +25,227 @@ header a {
   gap: 0.8rem;
 }
 
+.history-empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+}
+
+.history-instruction {
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  font-style: italic;
+  text-align: center;
+}
+
+.conversation-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.chat-item {
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.88rem;
+  max-width: 85%;
+}
+
+.chat-item .chat-sender {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.2rem;
+  opacity: 0.6;
+}
+
+.chat-item p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.chat-item.customer {
+  background: #f5f2ea;
+  border: 1px solid #e6dfd2;
+  align-self: flex-start;
+  border-bottom-left-radius: 0.25rem;
+  color: #1a1a1a;
+}
+
+.chat-item.agent {
+  background: #1a1a1a;
+  color: #fff;
+  align-self: flex-end;
+  border-bottom-right-radius: 0.25rem;
+  margin-left: auto;
+}
+
+/* Priority color coding */
+.toggle-row button {
+  border: 1px solid #d8d3c9;
+  border-radius: 0.55rem;
+  background: #fff;
+  padding: 0.38rem 0.7rem;
+  font-size: 0.84rem;
+  cursor: pointer;
+  color: #6b6355;
+  transition: all 0.15s;
+}
+
+.toggle-row button.active.prio-low {
+  background: #1a7a4a;
+  border-color: #1a7a4a;
+  color: #fff;
+}
+
+.toggle-row button.active.prio-medium {
+  background: #b45309;
+  border-color: #b45309;
+  color: #fff;
+}
+
+.toggle-row button.active.prio-high {
+  background: #c23737;
+  border-color: #c23737;
+  color: #fff;
+}
+
+.toggle-row button.active.prio-urgent {
+  background: #7c1d1d;
+  border-color: #7c1d1d;
+  color: #fff;
+}
+
+/* Subtle priority hint even when not active */
+.toggle-row button.prio-low {
+  color: #1a7a4a;
+}
+.toggle-row button.prio-medium {
+  color: #b45309;
+}
+.toggle-row button.prio-high {
+  color: #c23737;
+}
+.toggle-row button.prio-urgent {
+  color: #7c1d1d;
+}
+
+.generating-badge {
+  margin-left: 0.5rem;
+  font-size: 0.72rem;
+  background: #f3eeff;
+  color: #6b3fa0;
+  border: 1px solid #c8b8f0;
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.history-instruction {
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem 1rem;
+  margin: 0;
+}
+
+.context-block {
+  margin-top: 0.85rem;
+}
+
+.context-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  margin: 0 0 0.35rem;
+}
+
+.chat-item.customer {
+  background: #f5f2ea;
+  border: 1px solid #e6dfd2;
+  border-radius: 0.75rem;
+  border-bottom-left-radius: 0.25rem;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.chat-item p {
+  margin: 0;
+}
+
+.ai-summary-box {
+  background: #151515;
+  color: #d0d0d0;
+  border-radius: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.ai-summary-box p {
+  margin: 0;
+}
+
+.context-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.85rem;
+}
+
+.meta-chip {
+  font-size: 0.76rem;
+  border: 1px solid #d8d3c9;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  background: #f5f2ea;
+  color: #6b6355;
+}
+
+.chip-low {
+  background: #e6f4ea;
+  color: #1a7a4a;
+  border-color: #a8d5b5;
+}
+.chip-medium {
+  background: #fef3e2;
+  color: #b45309;
+  border-color: #f0c87a;
+}
+.chip-high {
+  background: #fff1f1;
+  color: #c23737;
+  border-color: #f0a0a0;
+}
+.chip-urgent {
+  background: #2d0000;
+  color: #ff8080;
+  border-color: #7c1d1d;
+}
+
+.generating-badge {
+  margin-left: 0.5rem;
+  font-size: 0.72rem;
+  background: #f3eeff;
+  color: #6b3fa0;
+  border: 1px solid #c8b8f0;
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+  font-weight: 500;
+  font-style: normal;
+}
+
 .history-card,
 .ticket-form {
   border: 1px solid #ddd8cc;
@@ -129,7 +350,8 @@ textarea {
   .layout {
     grid-template-columns: 1fr;
   }
-}.create-ticket-page {
+}
+.create-ticket-page {
   display: grid;
   gap: 0.7rem;
 }

@@ -29,6 +29,30 @@ export class DashboardService {
     private readonly errorService: ErrorService,
   ) {}
 
+  applyRecommendation(): Observable<{ message: string; assigned: number }> {
+    return this.http
+      .post<{
+        message: string;
+        assigned: number;
+      }>(`${API_BASE_URL}/dashboard/apply-recommendation`, {})
+      .pipe(
+        this.errorService.handleHttpError<{
+          message: string;
+          assigned: number;
+        }>('Apply recommendation'),
+      );
+  }
+
+  getTeamLoad(): Observable<{
+    agents: Array<{ name: string; openTickets: number; status: string }>;
+  }> {
+    return this.http
+      .get<{
+        agents: Array<{ name: string; openTickets: number; status: string }>;
+      }>(`${API_BASE_URL}/dashboard/team-load`)
+      .pipe(this.errorService.handleHttpError('Fetch team load'));
+  }
+
   getMetrics(): Observable<DashboardMetrics> {
     return this.http
       .get<DashboardMetrics>(`${API_BASE_URL}/dashboard/metrics`)

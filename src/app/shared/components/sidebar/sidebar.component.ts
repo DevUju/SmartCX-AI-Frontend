@@ -15,6 +15,7 @@ export class SidebarComponent {
     { label: 'Issue Queue', path: '/issues' },
     { label: 'Tickets', path: '/tickets' },
     { label: 'Team Members', path: '/team-members' },
+    { label: 'Live Message', path: '/live-message' },
     { label: 'Settings', path: '/settings' },
   ];
 }

@@ -91,6 +91,14 @@ export class IssueService {
       );
   }
 
+  getSmartRespond(): Observable<{ suggestion: string }> {
+    return this.http
+      .get<{
+        suggestion: string;
+      }>(`${API_BASE_URL}/issues/insights/smart-respond`)
+      .pipe(this.errorService.handleHttpError('Get smart respond'));
+  }
+
   getTicketDraft(issueId: string): Observable<{ draft: string }> {
     return this.http
       .get<{ draft: string }>(`${API_BASE_URL}/issues/${issueId}/ticket-draft`)
