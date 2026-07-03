@@ -20,16 +20,25 @@
 
   <div class="panel trend-panel">
     <header>
-      <h2>Live Performance Trends</h2>
+      <h2>Performance Trends — Last 7 Days</h2>
     </header>
-    <div class="bars" role="img" aria-label="Performance trend bars">
+
+    @if (trends().length === 0) {
+    <p class="no-data">No ticket activity in the last 7 days yet.</p>
+    } @else {
+    <div class="bars" role="img" aria-label="Ticket trends over last 7 days">
       @for (point of trends(); track point.time) {
       <div class="bar-wrap">
-        <div class="bar" [style.height.%]="point.value"></div>
+        <span class="bar-count">{{ point.opened }}</span>
+        <div class="bar" [style.height.%]="point.value === 0 ? 4 : point.value"></div>
         <span>{{ point.time }}</span>
       </div>
       }
     </div>
+    <div class="bar-legend">
+      <span><span class="legend-dot opened"></span> Opened</span>
+    </div>
+    }
   </div>
 
   <div class="panel tickets-panel">
@@ -64,27 +73,43 @@
       </tbody>
     </table>
   </div>
-
   <div class="side-panels">
     <article class="panel team-panel">
-      <h2>Team Availability</h2>
+      <h2>Team Load</h2>
+      @if (team().length === 0) {
+      <p style="color: var(--ink-soft); font-size: 0.86rem; margin-top: 0.5rem;">
+        No agents found.
+      </p>
+      } @else {
       <ul>
-        @for (member of team; track member.name) {
+        @for (member of team(); track member.name) {
         <li>
           <span class="member-name">
-            <span class="member-icon" aria-hidden="true"></span>
+            <span class="member-dot" [class.dot-available]="member.status === 'Available'"
+              [class.dot-active]="member.status === 'Active'" [class.dot-busy]="member.status === 'Busy'"
+              [class.dot-overloaded]="member.status === 'Overloaded'" aria-hidden="true">
+            </span>
             {{ member.name }}
           </span>
-          <strong>{{ member.status }}</strong>
+          <div class="member-right">
+            <span class="ticket-count">{{ member.openTickets }} tickets</span>
+            <strong [class.status-available]="member.status === 'Available'"
+              [class.status-busy]="member.status === 'Busy'" [class.status-overloaded]="member.status === 'Overloaded'">
+              {{ member.status }}
+            </strong>
+          </div>
         </li>
         }
       </ul>
+      }
     </article>
 
     <article class="ai-panel">
-      <h2>AI Insight</h2>
+      <h2>✨ AI Insight</h2>
       <p>{{ aiInsight() }}</p>
-      <button type="button">Apply Recommendation</button>
+      <button type="button" [disabled]="applyingRecommendation()" (click)="applyRecommendation()">
+        {{ applyingRecommendation() ? '✨ Assigning...' : '✨ Apply Recommendation' }}
+      </button>
     </article>
   </div>
 </section>

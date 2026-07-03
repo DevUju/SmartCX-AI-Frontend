@@ -7,7 +7,11 @@ import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
 import { CustomerService } from '../../../core/services/customer.service';
-import { Priority, TicketService, TicketStatus } from '../../../core/services/ticket.service';
+import {
+  Priority,
+  TicketService,
+  TicketStatus,
+} from '../../../core/services/ticket.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { WebsocketService } from '../../../core/services/websocket.service';
 import { CustomerBadgeComponent } from '../../../shared/components/customer-badge/customer-badge.component';
@@ -33,20 +37,12 @@ type TicketRow = {
   styleUrl: './ticket-list.component.css',
 })
 export class TicketListComponent implements OnInit, OnDestroy {
-  protected readonly statusOptions: Array<'all' | 'open' | 'pending' | 'escalated' | 'resolved'> = [
-    'all',
-    'open',
-    'pending',
-    'escalated',
-    'resolved',
-  ];
-  protected readonly priorityOptions: Array<'all' | 'low' | 'medium' | 'high' | 'urgent'> = [
-    'all',
-    'low',
-    'medium',
-    'high',
-    'urgent',
-  ];
+  protected readonly statusOptions: Array<
+    'all' | 'open' | 'pending' | 'escalated' | 'resolved'
+  > = ['all', 'open', 'pending', 'escalated', 'resolved'];
+  protected readonly priorityOptions: Array<
+    'all' | 'low' | 'medium' | 'high' | 'urgent'
+  > = ['all', 'low', 'medium', 'high', 'urgent'];
 
   protected readonly tickets = signal<TicketRow[]>([]);
   protected readonly loading = signal(true);
@@ -55,8 +51,12 @@ export class TicketListComponent implements OnInit, OnDestroy {
   protected readonly page = signal(1);
   protected readonly limit = signal(20);
 
-  protected readonly selectedStatus = signal<'all' | 'open' | 'pending' | 'escalated' | 'resolved'>('all');
-  protected readonly selectedPriority = signal<'all' | 'low' | 'medium' | 'high' | 'urgent'>('all');
+  protected readonly selectedStatus = signal<
+    'all' | 'open' | 'pending' | 'escalated' | 'resolved'
+  >('all');
+  protected readonly selectedPriority = signal<
+    'all' | 'low' | 'medium' | 'high' | 'urgent'
+  >('all');
   protected readonly searchTerm = signal('');
   protected readonly selectedTab = signal<'all' | 'mine' | 'unassigned'>('all');
   private readonly destroy$ = new Subject<void>();
@@ -176,7 +176,9 @@ export class TicketListComponent implements OnInit, OnDestroy {
             customerStatus: 'new',
             issueType: ticket.category,
             priority: ticket.priority,
-            agentInitials: ticket.assignedAgentId ? ticket.assignedAgentId.slice(0, 2).toUpperCase() : '--',
+            agentInitials: ticket.assignedAgentId
+              ? ticket.assignedAgentId.slice(0, 2).toUpperCase()
+              : '--',
             status: ticket.status,
             lastActivity: this.toRelativeTime(ticket.updatedAt),
           }));
@@ -188,9 +190,13 @@ export class TicketListComponent implements OnInit, OnDestroy {
               this.tickets.update((items) =>
                 items.map((item) => ({
                   ...item,
-                  customer: customerMap.get(item.customer)?.name ?? item.customer,
-                  customerChannel: (customerMap.get(item.customer)?.channel ?? item.customerChannel) as TicketRow['customerChannel'],
-                  customerStatus: customerMap.get(item.customer)?.status ?? item.customerStatus,
+                  customer:
+                    customerMap.get(item.customer)?.name ?? item.customer,
+                  customerChannel: (customerMap.get(item.customer)?.channel ??
+                    item.customerChannel) as TicketRow['customerChannel'],
+                  customerStatus:
+                    customerMap.get(item.customer)?.status ??
+                    item.customerStatus,
                 })),
               );
             },
@@ -268,7 +274,7 @@ export class TicketListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.websocketService.connect(user.businessId);
+    this.websocketService.connect(user.businessId, user.id);
     this.websocketService.ticketUpdated$
       .pipe(takeUntil(this.destroy$))
       .subscribe((payload) => {

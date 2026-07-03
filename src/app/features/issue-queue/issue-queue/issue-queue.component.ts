@@ -1,10 +1,17 @@
+import { DashboardService } from '../../../core/services/dashboard.service';
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
-import { finalize } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  finalize,
+  switchMap,
+  takeUntil,
+} from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
 import { CustomerService } from '../../../core/services/customer.service';
 import { Issue, IssueService } from '../../../core/services/issue.service';
@@ -46,6 +53,17 @@ export class IssueQueueComponent implements OnInit, OnDestroy {
   protected readonly page = signal(1);
   protected readonly limit = signal(20);
   protected readonly aiInsight = signal('Loading insight...');
+  protected readonly teamLoadSummary = signal('Loading team status...');
+
+  protected readonly selectedIssueId = signal<string | null>(null);
+  protected readonly selectedIssuePreview = signal<string | null>(null);
+  protected readonly smartRespond = signal(
+    'Hover over an issue row to get a smart reply suggestion.',
+  );
+  protected readonly loadingSmartRespond = signal(false);
+  protected readonly copied = signal(false);
+
+  private readonly issueHover$ = new Subject<string>();
 
   protected readonly selectedStatus = signal<
     'all' | 'new' | 'pending' | 'converted' | 'closed'
@@ -84,11 +102,14 @@ export class IssueQueueComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly websocketService: WebsocketService,
     private readonly customerService: CustomerService,
+    private readonly dashboardService: DashboardService,
   ) {}
 
   ngOnInit(): void {
     this.hydrateFromQueryParams();
     this.setupRealtimeRefresh();
+    this.setupSmartRespond();
+
     this.searchInput$
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe((value) => {
@@ -97,15 +118,53 @@ export class IssueQueueComponent implements OnInit, OnDestroy {
       });
 
     this.loadIssues();
+
     this.issueService.getQueueInsight().subscribe({
       next: (response) => this.aiInsight.set(response.summary),
       error: () => this.aiInsight.set('Insight unavailable right now.'),
+    });
+
+    this.dashboardService.getTeamLoad().subscribe({
+      next: (response) => {
+        const agents = response.agents;
+        const available = agents.filter((a) => a.status === 'Available').length;
+        const overloaded = agents.filter(
+          (a) => a.status === 'Overloaded',
+        ).length;
+        const total = agents.length;
+        if (total === 0) {
+          this.teamLoadSummary.set('No agents configured yet.');
+          return;
+        }
+        const summary =
+          overloaded > 0
+            ? `${overloaded} of ${total} agents overloaded. Consider redistributing.`
+            : available > 0
+              ? `${available} of ${total} agents available. Queue is well-staffed.`
+              : `All ${total} agents active. Monitor for escalations.`;
+        this.teamLoadSummary.set(summary);
+      },
+      error: () => this.teamLoadSummary.set('Team status unavailable.'),
     });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  protected onIssueHover(issue: QueueItem): void {
+    if (this.selectedIssueId() === issue.id) return;
+    this.selectedIssueId.set(issue.id);
+    this.selectedIssuePreview.set(issue.preview);
+    this.issueHover$.next(issue.id);
+  }
+
+  protected copySmartRespond(): void {
+    void navigator.clipboard.writeText(this.smartRespond()).then(() => {
+      this.copied.set(true);
+      setTimeout(() => this.copied.set(false), 2000);
+    });
   }
 
   protected retry(): void {
@@ -123,13 +182,36 @@ export class IssueQueueComponent implements OnInit, OnDestroy {
   }
 
   protected goToPage(nextPage: number): void {
-    if (nextPage < 1 || nextPage > this.totalPages()) {
-      return;
-    }
-
+    if (nextPage < 1 || nextPage > this.totalPages()) return;
     this.page.set(nextPage);
     this.syncQueryParams();
     this.loadIssues();
+  }
+
+  private setupSmartRespond(): void {
+    this.issueHover$
+      .pipe(
+        debounceTime(600),
+        distinctUntilChanged(),
+        switchMap((issueId) => {
+          this.loadingSmartRespond.set(true);
+          this.smartRespond.set('Generating suggestion...');
+          return this.issueService
+            .getSmartReplies(issueId)
+            .pipe(finalize(() => this.loadingSmartRespond.set(false)));
+        }),
+        takeUntil(this.destroy$),
+      )
+      .subscribe({
+        next: (response) => {
+          this.smartRespond.set(
+            response.replies[0] ?? 'No suggestion available.',
+          );
+        },
+        error: () => {
+          this.smartRespond.set('Could not generate suggestion right now.');
+        },
+      });
   }
 
   private loadIssues(): void {
@@ -187,9 +269,7 @@ export class IssueQueueComponent implements OnInit, OnDestroy {
                 })),
               );
             },
-            error: () => {
-              // Keep fallback customer IDs if lookup fails.
-            },
+            error: () => {},
           });
         },
         error: (error: Error) => {
@@ -203,9 +283,7 @@ export class IssueQueueComponent implements OnInit, OnDestroy {
     const params = this.route.snapshot.queryParamMap;
 
     const page = Number(params.get('page') ?? '1');
-    if (!Number.isNaN(page) && page > 0) {
-      this.page.set(page);
-    }
+    if (!Number.isNaN(page) && page > 0) this.page.set(page);
 
     const status = params.get('status');
     if (
@@ -230,9 +308,7 @@ export class IssueQueueComponent implements OnInit, OnDestroy {
     }
 
     const search = params.get('search');
-    if (search) {
-      this.searchTerm.set(search);
-    }
+    if (search) this.searchTerm.set(search);
   }
 
   private syncQueryParams(): void {
@@ -251,25 +327,19 @@ export class IssueQueueComponent implements OnInit, OnDestroy {
 
   private setupRealtimeRefresh(): void {
     const user = this.authService.getCurrentUser();
-    if (!user?.businessId) {
-      return;
-    }
+    if (!user?.businessId) return;
 
-    this.websocketService.connect(user.businessId);
+    this.websocketService.connect(user.businessId, user.id);
     this.websocketService.issueNew$
       .pipe(takeUntil(this.destroy$))
       .subscribe((payload) => {
-        if (payload.businessId === user.businessId) {
-          this.loadIssues();
-        }
+        if (payload.businessId === user.businessId) this.loadIssues();
       });
 
     this.websocketService.ticketUpdated$
       .pipe(takeUntil(this.destroy$))
       .subscribe((payload) => {
-        if (payload.businessId === user.businessId) {
-          this.loadIssues();
-        }
+        if (payload.businessId === user.businessId) this.loadIssues();
       });
   }
 }

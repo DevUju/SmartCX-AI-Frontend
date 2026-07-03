@@ -25,6 +25,7 @@ export class CreateTicketComponent implements OnInit {
   protected readonly isSubmitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly generatingDraft = signal(false);
+  protected readonly selectedIssue = signal<Issue | null>(null);
 
   get canSubmit(): boolean {
     return this.form.valid && !this.isSubmitting();
@@ -71,9 +72,9 @@ export class CreateTicketComponent implements OnInit {
 
   protected onIssueChange(issueId: string): void {
     const selectedIssue = this.issues().find((issue) => issue.id === issueId);
-    if (!selectedIssue) {
-      return;
-    }
+    if (!selectedIssue) return;
+
+    this.selectedIssue.set(selectedIssue);
 
     this.form.patchValue({
       issueId: selectedIssue.id,
@@ -83,6 +84,8 @@ export class CreateTicketComponent implements OnInit {
       priority: this.toDisplayPriority(selectedIssue.priority),
       draft: selectedIssue.aiAnalysisSummary || selectedIssue.messagePreview,
     });
+
+    this.regenerateDraft();
   }
 
   protected selectPriority(priority: string): void {
@@ -95,6 +98,35 @@ export class CreateTicketComponent implements OnInit {
       return;
     }
 
+    const selectedIssue = this.issues().find(
+      (issue) => issue.id === this.form.controls.issueId.value,
+    );
+
+    // Map the old raw messages to send into the new ticket
+
+    // const initialMessages =
+    //   selectedIssue?.rawMessages.map((entry) => {
+    //     const content =
+    //       typeof entry['content'] === 'string'
+    //         ? entry['content']
+    //         : typeof entry['message'] === 'string'
+    //           ? entry['message']
+    //           : typeof entry['text'] === 'string'
+    //             ? entry['text']
+    //             : selectedIssue.messagePreview;
+
+    //     const st = entry['senderType'];
+
+    //     // Explicitly cast to the strict literal type
+    //     const senderType = (
+    //       st === 'agent' || st === 'ai_bot' || st === 'customer'
+    //         ? st
+    //         : 'customer'
+    //     ) as 'customer' | 'agent' | 'ai_bot';
+
+    //     return { content, senderType };
+    //   }) || [];
+
     this.errorMessage.set(null);
     this.isSubmitting.set(true);
     this.ticketService
@@ -105,6 +137,7 @@ export class CreateTicketComponent implements OnInit {
         category: this.form.controls.category.value,
         priority: this.form.controls.priority.value.toLowerCase() as Priority,
         aiDraftSummary: this.form.controls.draft.value,
+        aiInsightSummary: selectedIssue?.aiAnalysisSummary ?? '',
       })
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
@@ -141,10 +174,13 @@ export class CreateTicketComponent implements OnInit {
                   customerMap.get(issue.customerId)?.name ?? issue.customerId;
               });
               this.customerNamesByIssueId.set(byIssue);
+
+              // Re-patch after names are ready so the selected issue shows correct customer
+              if (activeIssue) {
+                this.onIssueChange(activeIssue.id);
+              }
             },
-            error: () => {
-              // Keep fallback customer IDs in option labels.
-            },
+            error: () => {},
           });
 
           const fallbackIssue = response.items[0];

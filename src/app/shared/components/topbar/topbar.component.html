@@ -6,14 +6,50 @@
   </label>
 
   <div class="actions" aria-label="Topbar actions">
+
+    <!-- Notification Bell -->
+    <div class="bell-wrap">
+      <button type="button" class="bell-btn" (click)="toggleNotifications()">
+        🔔
+        @if (notificationService.unreadCount() > 0) {
+        <span class="bell-badge">{{ notificationService.unreadCount() }}</span>
+        }
+      </button>
+
+      @if (showNotifications()) {
+      <div class="notification-dropdown">
+        <div class="notification-header">
+          <h3>Notifications</h3>
+        </div>
+
+        @if (notificationService.loading()) {
+        <p class="notification-empty">Loading...</p>
+        } @else if (notificationService.notifications().length === 0) {
+        <p class="notification-empty">No new notifications.</p>
+        } @else {
+        @for (n of notificationService.notifications(); track n.id) {
+        <div class="notification-item" (click)="navigateTo(n)">
+          <p class="notification-msg">{{ n.message }}</p>
+          <small class="notification-time">
+            {{ n.createdAt | date:'shortTime' }}
+          </small>
+        </div>
+        }
+        }
+      </div>
+      }
+    </div>
+
     <button type="button" class="logout-btn" (click)="logout()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round">
         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
         <polyline points="16 17 21 12 16 7"></polyline>
         <line x1="21" y1="12" x2="9" y2="12"></line>
       </svg>
       Logout
     </button>
+
     <div class="avatar">{{ userInitials() }}</div>
   </div>
 </header>

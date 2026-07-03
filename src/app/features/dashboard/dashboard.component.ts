@@ -4,6 +4,8 @@ import { finalize } from 'rxjs/operators';
 import { DashboardService } from '../../core/services/dashboard.service';
 import { TicketService } from '../../core/services/ticket.service';
 import { RouterModule } from '@angular/router';
+import { ToastService } from '../../core/services/toast.service';
+
 type Metric = {
   label: string;
   value: string;
@@ -13,6 +15,8 @@ type Metric = {
 type TrendPoint = {
   time: string;
   value: number;
+  opened: number;
+  resolved: number;
 };
 
 type ActiveTicket = {
@@ -23,7 +27,8 @@ type ActiveTicket = {
 
 type AgentAvailability = {
   name: string;
-  status: 'Active' | 'On Call' | 'Optimizing';
+  openTickets: number;
+  status: string;
 };
 
 @Component({
@@ -37,6 +42,8 @@ export class DashboardComponent implements OnInit {
   protected readonly loading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly aiInsight = signal('Loading insight...');
+  protected readonly applyingRecommendation = signal(false);
+  protected readonly team = signal<AgentAvailability[]>([]);
 
   protected readonly metrics = signal<Metric[]>([
     { label: 'Open Tickets', value: '0' },
@@ -48,15 +55,10 @@ export class DashboardComponent implements OnInit {
 
   protected readonly tickets = signal<ActiveTicket[]>([]);
 
-  protected readonly team: AgentAvailability[] = [
-    { name: 'Aisha Bello', status: 'Active' },
-    { name: 'Ikenna Obi', status: 'On Call' },
-    { name: 'Tomiwa Ade', status: 'Optimizing' },
-  ];
-
   constructor(
     private readonly dashboardService: DashboardService,
     private readonly ticketService: TicketService,
+    private readonly toastService: ToastService,
   ) {}
 
   ngOnInit(): void {
@@ -64,7 +66,32 @@ export class DashboardComponent implements OnInit {
       next: (response) => this.aiInsight.set(response.summary),
       error: () => this.aiInsight.set('Insight unavailable right now.'),
     });
+
+    this.dashboardService.getTeamLoad().subscribe({
+      next: (response) => this.team.set(response.agents),
+      error: () => {},
+    });
     this.loadDashboard();
+  }
+
+  protected applyRecommendation(): void {
+    if (this.applyingRecommendation()) return;
+
+    this.applyingRecommendation.set(true);
+    this.dashboardService
+      .applyRecommendation()
+      .pipe(finalize(() => this.applyingRecommendation.set(false)))
+      .subscribe({
+        next: (result) => {
+          this.toastService.success(result.message);
+          if (result.assigned > 0) {
+            this.loadDashboard(); // refresh metrics
+          }
+        },
+        error: (error: Error) => {
+          this.toastService.error(error.message);
+        },
+      });
   }
 
   protected retry(): void {
@@ -83,9 +110,9 @@ export class DashboardComponent implements OnInit {
           this.metrics.set([
             { label: 'Open Tickets', value: String(metrics.openTickets) },
             {
-              label: 'Resolved 24h',
+              label: 'Resolved (7 days)',
               value: String(metrics.resolvedLast24h),
-              extra: `${metrics.resolvedLast24hChangePercent >= 0 ? '+' : ''}${metrics.resolvedLast24hChangePercent}%`,
+              extra: `${metrics.resolvedLast24hChangePercent >= 0 ? '+' : ''}${metrics.resolvedLast24hChangePercent}% vs prev week`,
             },
             { label: 'Avg Response', value: `${metrics.avgResponseHours}h` },
           ]);
@@ -95,16 +122,31 @@ export class DashboardComponent implements OnInit {
 
     this.dashboardService.getTrends().subscribe({
       next: (trends) => {
+        const hasData = trends.points.some(
+          (p) => p.ticketsOpened > 0 || p.ticketsResolved > 0,
+        );
+
+        if (!hasData) {
+          this.trends.set([]);
+          return;
+        }
+
         const max = Math.max(
-          ...trends.points.map((point) =>
-            Math.max(point.ticketsOpened, point.ticketsResolved),
+          ...trends.points.map((p) =>
+            Math.max(p.ticketsOpened, p.ticketsResolved),
           ),
           1,
         );
+
         this.trends.set(
-          trends.points.map((point) => ({
-            time: point.time,
-            value: Math.round((point.ticketsOpened / max) * 100),
+          trends.points.map((p) => ({
+            time: new Date(p.time).toLocaleDateString('en-NG', {
+              weekday: 'short',
+              day: 'numeric',
+            }),
+            value: Math.round((p.ticketsOpened / max) * 100),
+            opened: p.ticketsOpened,
+            resolved: p.ticketsResolved,
           })),
         );
       },

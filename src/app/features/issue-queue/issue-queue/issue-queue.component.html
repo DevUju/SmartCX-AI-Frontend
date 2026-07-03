@@ -1,4 +1,4 @@
-<section class="issue-queue">
+<!-- <section class="issue-queue">
   <header class="queue-header">
     <div>
       <h1>Issue Queue</h1>
@@ -57,7 +57,7 @@
       </thead>
       <tbody>
         @for (issue of issues(); track issue.id) {
-        <tr>
+        <tr (mouseenter)="onIssueHover(issue)" [class.highlighted]="selectedIssueId() === issue.id">
           <td>
             <span class="priority" [class.high]="issue.priority === 'HIGH' || issue.priority === 'URGENT'">
               {{ issue.priority === 'HIGH' || issue.priority === 'URGENT' ? '! ' + issue.priority : '- ' +
@@ -99,18 +99,168 @@
 
   <section class="insights-grid">
     <article>
-      <h3>AI Insights</h3>
+      <h3>✨ AI Insights</h3>
       <p>{{ aiInsight() }}</p>
     </article>
+
     <article>
       <h3>Team Load</h3>
-      <!-- TODO: placeholder until agent workload tracking exists -->
-      <p>Two agents are under optimal load, one is approaching threshold.(HARDCODED PLACEHOLDER FOR NOW!!)</p>
+      <p>{{ teamLoadSummary() }}</p>
     </article>
-    <article>
-      <h3>Smart Respond</h3>
-      <!-- TODO: placeholder until ticket-template suggestion logic exists -->
-      <p>Use payment discrepancy template for faster first-response handling. (HARDCODED PLACEHOLDER FOR NOW!!)</p>
+
+    <article class="smart-respond-card">
+      <div class="smart-respond-header">
+        <h3>✨ Smart Respond</h3>
+        @if (selectedIssuePreview()) {
+        <span class="issue-context-chip">
+          {{ selectedIssuePreview()! | slice:0:40 }}...
+        </span>
+        }
+      </div>
+
+      @if (loadingSmartRespond()) {
+      <p class="smart-respond-text loading">Generating suggestion...</p>
+      } @else {
+      <p class="smart-respond-text">{{ smartRespond() }}</p>
+      }
+
+      @if (!loadingSmartRespond() && selectedIssueId()) {
+      <button type="button" class="copy-btn" (click)="copySmartRespond()">
+        {{ copied() ? '✓ Copied!' : 'Copy' }}
+      </button>
+      }
+    </article>
+  </section>
+</section> -->
+
+<section class="issue-queue">
+  <header class="queue-header">
+    <div>
+      <h1>Issue Queue</h1>
+      <p>Monitor incoming complaints and convert priority issues into tickets.</p>
+    </div>
+    <div class="header-actions">
+      <a class="btn-primary" [routerLink]="['/tickets/create']">+ New Ticket</a>
+    </div>
+  </header>
+
+  <article class="filter-bar">
+    <input type="text" placeholder="Search issues..." [ngModel]="searchTerm()"
+      (ngModelChange)="onSearchInput($event)" />
+    <select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event); applyFilters()">
+      @for (status of statuses; track status) {
+      <option [value]="status">{{ status | titlecase }}</option>
+      }
+    </select>
+    <select [ngModel]="selectedPriority()" (ngModelChange)="selectedPriority.set($event); applyFilters()">
+      @for (priority of priorities; track priority) {
+      <option [value]="priority">{{ priority | titlecase }}</option>
+      }
+    </select>
+    <button type="button" class="btn-primary" (click)="applyFilters()">Search</button>
+  </article>
+
+  @if (errorMessage()) {
+  <article class="table-wrap" style="padding: 1rem;">
+    <p>{{ errorMessage() }}</p>
+    <button type="button" class="btn-primary" (click)="retry()">Retry</button>
+  </article>
+  }
+
+  <div class="tabs">
+    @for (tab of tabs(); track tab.label) {
+    <button type="button">{{ tab.label }} ({{ tab.count }})</button>
+    }
+  </div>
+
+  <article class="table-wrap">
+    @if (loading()) {
+    <p class="table-empty">Loading issues...</p>
+    } @else if (issues().length === 0) {
+    <p class="table-empty">No issues found matching your filters.</p>
+    } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Priority</th>
+          <th>Customer</th>
+          <th>Preview</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (issue of issues(); track issue.id) {
+        <tr (mouseenter)="onIssueHover(issue)" [class.highlighted]="selectedIssueId() === issue.id">
+          <td>
+            <span class="priority-badge" [class.prio-urgent]="issue.priority === 'URGENT'"
+              [class.prio-high]="issue.priority === 'HIGH'" [class.prio-medium]="issue.priority === 'MEDIUM'"
+              [class.prio-low]="issue.priority === 'LOW'">
+              {{ issue.priority }}
+            </span>
+          </td>
+          <td>
+            <app-customer-badge [name]="issue.customer" [channel]="issue.customerChannel"
+              [status]="issue.customerStatus" [hideStatus]="true" />
+          </td>
+          <td class="preview-cell">{{ issue.preview }}</td>
+          <td><span class="category-chip">{{ issue.tag }}</span></td>
+          <td>
+            <span class="status-badge" [class.status-new]="issue.status === 'NEW'"
+              [class.status-pending]="issue.status === 'PENDING'"
+              [class.status-converted]="issue.status === 'CONVERTED'">
+              {{ issue.status }}
+            </span>
+          </td>
+          <td>
+            <a class="view-btn" [routerLink]="['/issues', issue.id]">View →</a>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+    }
+  </article>
+
+  <footer class="pagination-row">
+    <p>Page {{ page() }} of {{ totalPages() }} · {{ issues().length }} of {{ total() }} results</p>
+    <div>
+      <button type="button" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">← Prev</button>
+      <button type="button" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">Next →</button>
+    </div>
+  </footer>
+
+  <section class="insights-grid">
+    <article class="insight-card ai-insight-card">
+      <h3>✨ AI Insights</h3>
+      <p>{{ aiInsight() }}</p>
+    </article>
+
+    <article class="insight-card">
+      <h3>Team Load</h3>
+      <p>{{ teamLoadSummary() }}</p>
+    </article>
+
+    <article class="insight-card smart-respond-card">
+      <div class="smart-respond-header">
+        <h3>✨ Smart Respond</h3>
+        @if (selectedIssuePreview()) {
+        <span class="issue-context-chip">
+          {{ selectedIssuePreview()! | slice:0:40 }}...
+        </span>
+        }
+      </div>
+      @if (loadingSmartRespond()) {
+      <p class="smart-respond-text loading">Generating suggestion...</p>
+      } @else {
+      <p class="smart-respond-text">{{ smartRespond() }}</p>
+      }
+      @if (!loadingSmartRespond() && selectedIssueId()) {
+      <button type="button" class="copy-btn" (click)="copySmartRespond()">
+        {{ copied() ? '✓ Copied!' : 'Copy' }}
+      </button>
+      }
     </article>
   </section>
 </section>

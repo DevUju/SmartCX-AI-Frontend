@@ -28,7 +28,7 @@ export class ConversationViewComponent implements OnInit {
   protected readonly messages = signal<ChatMessage[]>([]);
   protected readonly loading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
-
+  protected readonly issuePriority = signal<string>('medium');
   protected draftMessage = '';
   protected readonly sending = signal(false);
 
@@ -83,6 +83,7 @@ export class ConversationViewComponent implements OnInit {
           });
 
           this.customerId.set(issue.customerId);
+          this.issuePriority.set(issue.priority);
           const parsedMessages = issue.rawMessages
             .map((entry) => {
               const text =
